@@ -5,20 +5,53 @@ function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
+  const [errors, setErrors] = useState({});
+  const [isLoading, setIsLoading] = useState(false);
+  const [successMessage, setSuccessMessage] = useState("");
+
+  function validateForm() {
+    const newErrors = {};
+
+    if (!email.trim()) {
+      newErrors.email = "Email is required.";
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      newErrors.email = "Please enter a valid email address.";
+    }
+
+    if (!password) {
+      newErrors.password = "Password is required.";
+    }
+
+    return newErrors;
+  }
+
   function handleSubmit(event) {
     event.preventDefault();
 
-    console.log("Login form submitted", {
-      email,
-      password,
-    });
+    setSuccessMessage("");
+
+    const validationErrors = validateForm();
+
+    if (Object.keys(validationErrors).length > 0) {
+      setErrors(validationErrors);
+      return;
+    }
+
+    setErrors({});
+    setIsLoading(true);
+
+    // Temporary loading simulation.
+    // The real authentication API will be connected later.
+    setTimeout(() => {
+      setIsLoading(false);
+      setSuccessMessage("Login form submitted successfully.");
+    }, 1000);
   }
 
   return (
     <main className="min-h-screen bg-[#0F1830] px-4 py-8 text-[#F1F3F6] sm:px-6">
       <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
         <section className="w-full max-w-md rounded-2xl border border-[#1A2547] bg-[#1A2547] p-6 shadow-2xl sm:p-8">
-          {/* Branding */}
           <div className="mb-8 text-center">
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-[#2FD5A6]">
               Smart Recruiter
@@ -33,8 +66,16 @@ function Login() {
             </p>
           </div>
 
-          {/* Login form */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          {successMessage && (
+            <div
+              role="status"
+              className="mb-5 rounded-lg border border-[#2FD5A6]/30 bg-[#2FD5A6]/10 px-4 py-3 text-sm text-[#2FD5A6]"
+            >
+              {successMessage}
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="space-y-5" noValidate>
             {/* Email */}
             <div>
               <label
@@ -49,27 +90,79 @@ function Login() {
                 name="email"
                 type="email"
                 value={email}
-                onChange={(event) => setEmail(event.target.value)}
+                onChange={(event) => {
+                  setEmail(event.target.value);
+
+                  if (errors.email) {
+                    setErrors((current) => ({
+                      ...current,
+                      email: "",
+                    }));
+                  }
+                }}
                 placeholder="you@example.com"
-                className="w-full rounded-lg border border-[#0F1830] bg-[#0F1830] px-4 py-3 text-[#F1F3F6] outline-none transition placeholder:text-[#F1F3F6]/40 focus:border-[#2FD5A6] focus:ring-2 focus:ring-[#2FD5A6]/20"
+                aria-invalid={Boolean(errors.email)}
+                aria-describedby={errors.email ? "email-error" : undefined}
+                className={`w-full rounded-lg border bg-[#0F1830] px-4 py-3 text-[#F1F3F6] outline-none transition placeholder:text-[#F1F3F6]/40 focus:ring-2 ${
+                  errors.email
+                    ? "border-[#E85C4A] focus:border-[#E85C4A] focus:ring-[#E85C4A]/20"
+                    : "border-[#0F1830] focus:border-[#2FD5A6] focus:ring-[#2FD5A6]/20"
+                }`}
               />
+
+              {errors.email && (
+                <p
+                  id="email-error"
+                  className="mt-2 text-sm text-[#E85C4A]"
+                >
+                  {errors.email}
+                </p>
+              )}
             </div>
 
-            <PasswordInput
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-            />
+            {/* Password */}
+            <div>
+              <PasswordInput
+                value={password}
+                onChange={(event) => {
+                  setPassword(event.target.value);
+
+                  if (errors.password) {
+                    setErrors((current) => ({
+                      ...current,
+                      password: "",
+                    }));
+                  }
+                }}
+              />
+
+              {errors.password && (
+                <p className="mt-2 text-sm text-[#E85C4A]">
+                  {errors.password}
+                </p>
+              )}
+            </div>
+
+            {/* General error */}
+            {errors.general && (
+              <div
+                role="alert"
+                className="rounded-lg border border-[#E85C4A]/30 bg-[#E85C4A]/10 px-4 py-3 text-sm text-[#E85C4A]"
+              >
+                {errors.general}
+              </div>
+            )}
 
             {/* Submit */}
             <button
               type="submit"
-              className="w-full rounded-lg bg-[#2FD5A6] px-4 py-3 font-semibold text-[#0F1830] transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[#2FD5A6] focus:ring-offset-2 focus:ring-offset-[#1A2547]"
+              disabled={isLoading}
+              className="w-full rounded-lg bg-[#2FD5A6] px-4 py-3 font-semibold text-[#0F1830] transition hover:brightness-110 focus:outline-none focus:ring-2 focus:ring-[#2FD5A6] focus:ring-offset-2 focus:ring-offset-[#1A2547] disabled:cursor-not-allowed disabled:opacity-60"
             >
-              Sign in
+              {isLoading ? "Signing in..." : "Sign in"}
             </button>
           </form>
 
-          {/* Registration link */}
           <p className="mt-6 text-center text-sm text-[#F1F3F6]/60">
             Don't have an account?{" "}
             <button
