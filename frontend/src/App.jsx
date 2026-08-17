@@ -1,7 +1,7 @@
-import Register from "./pages/auth/Register";
+import AppRoutes from "./routes/AppRoutes";
 
 function App() {
-  return <Register />;
+  return <AppRoutes />;
 }
 
 export default App;

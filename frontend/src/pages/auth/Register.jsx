@@ -1,6 +1,6 @@
 import { useState } from "react";
 import PasswordInput from "../../components/auth/PasswordInput";
-
+import { Link } from "react-router-dom";
 function Register() {
   const [formData, setFormData] = useState({
     fullName: "",
@@ -265,12 +265,12 @@ function Register() {
           {/* Login link */}
           <p className="mt-6 text-center text-sm text-[#F1F3F6]/60">
             Already have an account?{" "}
-            <button
-              type="button"
-              className="font-semibold text-[#2FD5A6] transition hover:text-[#F1F3F6]"
-            >
-              Sign in
-            </button>
+            <Link
+  to="/login"
+  className="font-semibold text-[#2FD5A6] transition hover:text-[#F1F3F6]"
+>
+  Sign in
+</Link>
           </p>
         </section>
       </div>

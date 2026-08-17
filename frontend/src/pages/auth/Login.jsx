@@ -1,6 +1,6 @@
 import { useState } from "react";
 import PasswordInput from "../../components/auth/PasswordInput";
-
+import { Link } from "react-router-dom";
 function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -165,12 +165,12 @@ function Login() {
 
           <p className="mt-6 text-center text-sm text-[#F1F3F6]/60">
             Don't have an account?{" "}
-            <button
-              type="button"
-              className="font-semibold text-[#2FD5A6] transition hover:text-[#F1F3F6]"
-            >
-              Register
-            </button>
+            <Link
+  to="/register"
+  className="font-semibold text-[#2FD5A6] transition hover:text-[#F1F3F6]"
+>
+  Register
+</Link>
           </p>
         </section>
       </div>
