@@ -1,6 +1,11 @@
 import { useState } from "react";
 
-function PasswordInput({ value, onChange, name = "password" }) {
+function PasswordInput({
+  value,
+  onChange,
+  name = "password",
+  label = "Password",
+}) {
   const [showPassword, setShowPassword] = useState(false);
 
   return (
@@ -9,7 +14,7 @@ function PasswordInput({ value, onChange, name = "password" }) {
         htmlFor={name}
         className="mb-2 block text-sm font-medium text-[#F1F3F6]"
       >
-        Password
+        {label}
       </label>
 
       <div className="relative">
@@ -19,8 +24,8 @@ function PasswordInput({ value, onChange, name = "password" }) {
           type={showPassword ? "text" : "password"}
           value={value}
           onChange={onChange}
-          placeholder="Enter your password"
-          className="w-full rounded-lg border border-[#1A2547] bg-[#1A2547] px-4 py-3 pr-20 text-[#F1F3F6] outline-none transition placeholder:text-[#F1F3F6]/40 focus:border-[#2FD5A6] focus:ring-2 focus:ring-[#2FD5A6]/20"
+          placeholder={`Enter your ${label.toLowerCase()}`}
+          className="w-full rounded-lg border border-[#0F1830] bg-[#0F1830] px-4 py-3 pr-20 text-[#F1F3F6] outline-none transition placeholder:text-[#F1F3F6]/40 focus:border-[#2FD5A6] focus:ring-2 focus:ring-[#2FD5A6]/20"
         />
 
         <button
