@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   loadAssessmentById,
+  saveAssessmentChanges,
   publish,
   clearActiveAssessment,
 } from "../../store/slices/assessmentSlice";
@@ -33,6 +34,10 @@ export default function EditAssessment() {
     }
   }, [active]);
 
+  const handleSave = () => {
+    dispatch(saveAssessmentChanges({ id, changes: { title, timeLimitMinutes: Number(timeLimit) } }));
+  };
+
   const handlePublish = async () => {
     await dispatch(publish(id));
     navigate("/recruiter/dashboard");
@@ -49,12 +54,19 @@ export default function EditAssessment() {
 
       <div className="grid grid-cols-[1.4fr_1fr] items-start gap-4">
         <div className="rounded-xl border border-paper-line bg-white p-5">
-          <Input label="Assessment title" type="text" value={title} onChange={(e) => setTitle(e.target.value)} />
+          <Input
+            label="Assessment title"
+            type="text"
+            value={title}
+            onChange={(e) => setTitle(e.target.value)}
+            onBlur={handleSave}
+          />
           <Input
             label="Overall time limit (minutes)"
             type="number"
             value={timeLimit}
             onChange={(e) => setTimeLimit(e.target.value)}
+            onBlur={handleSave}
             className="w-36"
           />
 
