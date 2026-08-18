@@ -57,7 +57,11 @@ export default function RecruiterDashboard() {
       )}
 
       {items.map((a) => (
-        <AssessmentCard key={a.id} assessment={a} onClick={() => {}} />
+        <AssessmentCard
+          key={a.id}
+          assessment={a}
+          onClick={() => navigate(`/recruiter/assessments/${a.id}/edit`)}
+        />
       ))}
     </div>
   );
