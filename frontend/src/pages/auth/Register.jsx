@@ -1,9 +1,22 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
+
 import PasswordInput from "../../components/auth/PasswordInput";
-import { Link } from "react-router-dom";
+import {
+  registerStart,
+  registerSuccess,
+  registerFailure,
+} from "../../store/slices/authSlice";
+
 function Register() {
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { isLoading, error } = useSelector((state) => state.auth);
+
   const [formData, setFormData] = useState({
-    fullName: "",
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -11,8 +24,6 @@ function Register() {
   });
 
   const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -28,15 +39,13 @@ function Register() {
         [name]: "",
       }));
     }
-
-    setSuccessMessage("");
   }
 
   function validateForm() {
     const newErrors = {};
 
-    if (!formData.fullName.trim()) {
-      newErrors.fullName = "Full name is required.";
+    if (!formData.name.trim()) {
+      newErrors.name = "Full name is required.";
     }
 
     if (!formData.email.trim()) {
@@ -67,8 +76,6 @@ function Register() {
   function handleSubmit(event) {
     event.preventDefault();
 
-    setSuccessMessage("");
-
     const validationErrors = validateForm();
 
     if (Object.keys(validationErrors).length > 0) {
@@ -77,13 +84,27 @@ function Register() {
     }
 
     setErrors({});
-    setIsLoading(true);
+
+    dispatch(registerStart());
 
     // Temporary registration simulation.
-    // The real API will be connected later.
+    // The real backend API can replace this later.
     setTimeout(() => {
-      setIsLoading(false);
-      setSuccessMessage("Registration form submitted successfully.");
+      const user = {
+        id: 1,
+        name: formData.name,
+        email: formData.email,
+        role: formData.role,
+      };
+
+      dispatch(
+        registerSuccess({
+          user,
+          token: "temporary-demo-token",
+        })
+      );
+
+      navigate("/login");
     }, 1000);
   }
 
@@ -91,7 +112,7 @@ function Register() {
     <main className="min-h-screen bg-[#0F1830] px-4 py-8 text-[#F1F3F6] sm:px-6">
       <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
         <section className="w-full max-w-md rounded-2xl border border-[#1A2547] bg-[#1A2547] p-6 shadow-2xl sm:p-8">
-          {/* Branding */}
+          {/* Header */}
           <div className="mb-8 text-center">
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-[#2FD5A6]">
               Smart Recruiter
@@ -102,17 +123,17 @@ function Register() {
             </h1>
 
             <p className="mt-2 text-sm text-[#F1F3F6]/60">
-              Join the technical assessment platform.
+              Create an account to access the assessment platform.
             </p>
           </div>
 
-          {/* Success */}
-          {successMessage && (
+          {/* Authentication error */}
+          {error && (
             <div
-              role="status"
-              className="mb-5 rounded-lg border border-[#2FD5A6]/30 bg-[#2FD5A6]/10 px-4 py-3 text-sm text-[#2FD5A6]"
+              role="alert"
+              className="mb-5 rounded-lg border border-[#E85C4A]/30 bg-[#E85C4A]/10 px-4 py-3 text-sm text-[#E85C4A]"
             >
-              {successMessage}
+              {error}
             </div>
           )}
 
@@ -120,30 +141,30 @@ function Register() {
             {/* Full name */}
             <div>
               <label
-                htmlFor="fullName"
+                htmlFor="name"
                 className="mb-2 block text-sm font-medium"
               >
                 Full name
               </label>
 
               <input
-                id="fullName"
-                name="fullName"
+                id="name"
+                name="name"
                 type="text"
-                value={formData.fullName}
+                value={formData.name}
                 onChange={handleChange}
-                placeholder="Enter your full name"
-                aria-invalid={Boolean(errors.fullName)}
+                placeholder="Your full name"
+                aria-invalid={Boolean(errors.name)}
                 className={`w-full rounded-lg border bg-[#0F1830] px-4 py-3 text-[#F1F3F6] outline-none transition placeholder:text-[#F1F3F6]/40 focus:ring-2 ${
-                  errors.fullName
+                  errors.name
                     ? "border-[#E85C4A] focus:border-[#E85C4A] focus:ring-[#E85C4A]/20"
                     : "border-[#0F1830] focus:border-[#2FD5A6] focus:ring-[#2FD5A6]/20"
                 }`}
               />
 
-              {errors.fullName && (
+              {errors.name && (
                 <p className="mt-2 text-sm text-[#E85C4A]">
-                  {errors.fullName}
+                  {errors.name}
                 </p>
               )}
             </div>
@@ -151,14 +172,14 @@ function Register() {
             {/* Email */}
             <div>
               <label
-                htmlFor="register-email"
+                htmlFor="email"
                 className="mb-2 block text-sm font-medium"
               >
                 Email
               </label>
 
               <input
-                id="register-email"
+                id="email"
                 name="email"
                 type="email"
                 value={formData.email}
@@ -182,16 +203,10 @@ function Register() {
             {/* Password */}
             <div>
               <PasswordInput
-                name="register-password"
+                name="password"
                 value={formData.password}
-                onChange={(event) =>
-                  handleChange({
-                    target: {
-                      name: "password",
-                      value: event.target.value,
-                    },
-                  })
-                }
+                onChange={handleChange}
+                label="Password"
               />
 
               {errors.password && (
@@ -205,19 +220,11 @@ function Register() {
             <div>
               <PasswordInput
                 name="confirmPassword"
-                label="Confirm Password"
                 value={formData.confirmPassword}
-                onChange={(event) =>
-                  handleChange({
-                    target: {
-                      name: "confirmPassword",
-                      value: event.target.value,
-                    },
-                  })
-                }
+                onChange={handleChange}
+                label="Confirm password"
               />
 
-              {/* Override the label generated by PasswordInput */}
               {errors.confirmPassword && (
                 <p className="mt-2 text-sm text-[#E85C4A]">
                   {errors.confirmPassword}
@@ -231,7 +238,7 @@ function Register() {
                 htmlFor="role"
                 className="mb-2 block text-sm font-medium"
               >
-                I am registering as
+                Account type
               </label>
 
               <select
@@ -266,11 +273,11 @@ function Register() {
           <p className="mt-6 text-center text-sm text-[#F1F3F6]/60">
             Already have an account?{" "}
             <Link
-  to="/login"
-  className="font-semibold text-[#2FD5A6] transition hover:text-[#F1F3F6]"
->
-  Sign in
-</Link>
+              to="/login"
+              className="font-semibold text-[#2FD5A6] transition hover:text-[#F1F3F6]"
+            >
+              Sign in
+            </Link>
           </p>
         </section>
       </div>
