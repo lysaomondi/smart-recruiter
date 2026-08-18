@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 import PasswordInput from "../../components/auth/PasswordInput";
 import {
@@ -11,6 +11,7 @@ import {
 
 function Login() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { isLoading, error } = useSelector((state) => state.auth);
 
@@ -52,17 +53,25 @@ function Login() {
     // The real Flask API will replace this later.
     setTimeout(() => {
       if (email === "najib@gmail.com" && password === "password123") {
-        dispatch(
-          loginSuccess({
-            user: {
-              id: 1,
-              name: "Test User",
-              email: email,
-              role: "interviewee",
-            },
-            token: "temporary-demo-token",
-          })
-        );
+        const user = {
+  id: 1,
+  name: "Test User",
+  email: email,
+  role: "interviewee",
+};
+
+dispatch(
+  loginSuccess({
+    user,
+    token: "temporary-demo-token",
+  })
+);
+
+if (user.role === "recruiter") {
+  navigate("/recruiter");
+} else {
+  navigate("/interviewee");
+}
       } else {
         dispatch(loginFailure("Invalid email or password."));
       }
