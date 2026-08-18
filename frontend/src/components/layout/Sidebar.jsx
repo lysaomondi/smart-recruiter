@@ -5,6 +5,7 @@ const LINKS = {
   recruiter: [
     { to: "/recruiter/dashboard", label: "Dashboard", icon: "▤" },
     { to: "/recruiter/assessments/create", label: "Create assessment", icon: "✎" },
+    { to: "/recruiter/assessments", label: "All assessments", icon: "☰" },
   ],
   interviewee: [],
 };
