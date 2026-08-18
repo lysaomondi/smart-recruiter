@@ -1,13 +1,22 @@
 import { useState } from "react";
-import PasswordInput from "../../components/auth/PasswordInput";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+
+import PasswordInput from "../../components/auth/PasswordInput";
+import {
+  loginStart,
+  loginSuccess,
+  loginFailure,
+} from "../../store/slices/authSlice";
+
 function Login() {
+  const dispatch = useDispatch();
+
+  const { isLoading, error } = useSelector((state) => state.auth);
+
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-
   const [errors, setErrors] = useState({});
-  const [isLoading, setIsLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState("");
 
   function validateForm() {
     const newErrors = {};
@@ -28,8 +37,6 @@ function Login() {
   function handleSubmit(event) {
     event.preventDefault();
 
-    setSuccessMessage("");
-
     const validationErrors = validateForm();
 
     if (Object.keys(validationErrors).length > 0) {
@@ -38,13 +45,27 @@ function Login() {
     }
 
     setErrors({});
-    setIsLoading(true);
 
-    // Temporary loading simulation.
-    // The real authentication API will be connected later.
+    dispatch(loginStart());
+
+    // Temporary authentication simulation.
+    // The real Flask API will replace this later.
     setTimeout(() => {
-      setIsLoading(false);
-      setSuccessMessage("Login form submitted successfully.");
+      if (email === "najib@gmail.com" && password === "password123") {
+        dispatch(
+          loginSuccess({
+            user: {
+              id: 1,
+              name: "Test User",
+              email: email,
+              role: "interviewee",
+            },
+            token: "temporary-demo-token",
+          })
+        );
+      } else {
+        dispatch(loginFailure("Invalid email or password."));
+      }
     }, 1000);
   }
 
@@ -52,6 +73,7 @@ function Login() {
     <main className="min-h-screen bg-[#0F1830] px-4 py-8 text-[#F1F3F6] sm:px-6">
       <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
         <section className="w-full max-w-md rounded-2xl border border-[#1A2547] bg-[#1A2547] p-6 shadow-2xl sm:p-8">
+          {/* Header */}
           <div className="mb-8 text-center">
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-[#2FD5A6]">
               Smart Recruiter
@@ -66,12 +88,13 @@ function Login() {
             </p>
           </div>
 
-          {successMessage && (
+          {/* Authentication error */}
+          {error && (
             <div
-              role="status"
-              className="mb-5 rounded-lg border border-[#2FD5A6]/30 bg-[#2FD5A6]/10 px-4 py-3 text-sm text-[#2FD5A6]"
+              role="alert"
+              className="mb-5 rounded-lg border border-[#E85C4A]/30 bg-[#E85C4A]/10 px-4 py-3 text-sm text-[#E85C4A]"
             >
-              {successMessage}
+              {error}
             </div>
           )}
 
@@ -143,16 +166,6 @@ function Login() {
               )}
             </div>
 
-            {/* General error */}
-            {errors.general && (
-              <div
-                role="alert"
-                className="rounded-lg border border-[#E85C4A]/30 bg-[#E85C4A]/10 px-4 py-3 text-sm text-[#E85C4A]"
-              >
-                {errors.general}
-              </div>
-            )}
-
             {/* Submit */}
             <button
               type="submit"
@@ -163,14 +176,15 @@ function Login() {
             </button>
           </form>
 
+          {/* Register link */}
           <p className="mt-6 text-center text-sm text-[#F1F3F6]/60">
             Don't have an account?{" "}
             <Link
-  to="/register"
-  className="font-semibold text-[#2FD5A6] transition hover:text-[#F1F3F6]"
->
-  Register
-</Link>
+              to="/register"
+              className="font-semibold text-[#2FD5A6] transition hover:text-[#F1F3F6]"
+            >
+              Register
+            </Link>
           </p>
         </section>
       </div>
