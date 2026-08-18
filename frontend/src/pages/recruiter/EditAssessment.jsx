@@ -4,7 +4,6 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   loadAssessmentById,
   saveAssessmentChanges,
-  publish,
   clearActiveAssessment,
 } from "../../store/slices/assessmentSlice";
 import QuestionBuilder from "../../components/assessment/QuestionBuilder";
@@ -36,11 +35,6 @@ export default function EditAssessment() {
 
   const handleSave = () => {
     dispatch(saveAssessmentChanges({ id, changes: { title, timeLimitMinutes: Number(timeLimit) } }));
-  };
-
-  const handlePublish = async () => {
-    await dispatch(publish(id));
-    navigate("/recruiter/dashboard");
   };
 
   if (!active) return <Loading label="Loading assessment…" />;
@@ -80,10 +74,10 @@ export default function EditAssessment() {
           <QuestionList questions={active.questions} />
           <Button
             className="mt-4 w-full justify-center"
-            onClick={handlePublish}
+            onClick={() => navigate(`/recruiter/assessments/${id}/review`)}
             disabled={active.status !== "draft" || active.questions.length === 0}
           >
-            {active.status === "draft" ? "Publish & send invitations" : "Already published"}
+            {active.status === "draft" ? "Review before publishing →" : "Already published"}
           </Button>
         </div>
       </div>
