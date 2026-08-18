@@ -2,6 +2,7 @@ import React from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import DashboardLayout from "../components/layout/DashboardLayout";
 import RecruiterDashboard from "../pages/recruiter/RecruiterDashboard";
+import CreateAssessment from "../pages/recruiter/CreateAssessment";
 
 export default function AppRoutes() {
   const handleLogout = () => {
@@ -12,6 +13,7 @@ export default function AppRoutes() {
     <Routes>
       <Route element={<DashboardLayout role="recruiter" onLogout={handleLogout} />}>
         <Route path="/recruiter/dashboard" element={<RecruiterDashboard />} />
+        <Route path="/recruiter/assessments/create" element={<CreateAssessment />} />
       </Route>
       <Route path="/" element={<Navigate to="/recruiter/dashboard" replace />} />
     </Routes>
