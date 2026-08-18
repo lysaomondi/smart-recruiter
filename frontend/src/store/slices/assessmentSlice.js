@@ -16,6 +16,11 @@ export const createNewAssessment = createAsyncThunk(
   async (payload) => await assessmentService.createAssessment(payload)
 );
 
+export const saveAssessmentChanges = createAsyncThunk(
+  "assessments/update",
+  async ({ id, changes }) => await assessmentService.updateAssessment(id, changes)
+);
+
 export const publish = createAsyncThunk(
   "assessments/publish",
   async (id) => await assessmentService.publishAssessment(id)
@@ -63,6 +68,12 @@ const assessmentSlice = createSlice({
       .addCase(createNewAssessment.fulfilled, (state, action) => {
         state.items.unshift(action.payload);
         state.active = action.payload;
+      })
+      .addCase(saveAssessmentChanges.fulfilled, (state, action) => {
+        state.active = action.payload;
+        state.items = state.items.map((a) =>
+          a.id === action.payload.id ? action.payload : a
+        );
       })
       .addCase(publish.fulfilled, (state, action) => {
         state.active = action.payload;
