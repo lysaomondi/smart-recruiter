@@ -4,6 +4,7 @@ import { NavLink } from "react-router-dom";
 const LINKS = {
   recruiter: [
     { to: "/recruiter/dashboard", label: "Dashboard", icon: "▤" },
+    { to: "/recruiter/assessments/create", label: "Create assessment", icon: "✎" },
   ],
   interviewee: [],
 };
