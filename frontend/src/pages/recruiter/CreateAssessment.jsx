@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { createNewAssessment, publish } from "../../store/slices/assessmentSlice";
+import { createNewAssessment } from "../../store/slices/assessmentSlice";
 import QuestionBuilder from "../../components/assessment/QuestionBuilder";
 import QuestionList from "../../components/assessment/QuestionList";
 import Button from "../../components/common/Button";
@@ -21,12 +21,6 @@ export default function CreateAssessment() {
     setSaving(true);
     await dispatch(createNewAssessment({ title, timeLimitMinutes: Number(timeLimit) }));
     setSaving(false);
-  };
-
-  const handlePublish = async () => {
-    if (!active) return;
-    await dispatch(publish(active.id));
-    navigate("/recruiter/dashboard");
   };
 
   return (
@@ -70,10 +64,10 @@ export default function CreateAssessment() {
           <QuestionList questions={active?.questions} />
           <Button
             className="mt-4 w-full justify-center"
-            onClick={handlePublish}
+            onClick={() => navigate(`/recruiter/assessments/${active.id}/review`)}
             disabled={!active || active.questions.length === 0}
           >
-            Publish & send invitations
+            Review before publishing →
           </Button>
         </div>
       </div>
