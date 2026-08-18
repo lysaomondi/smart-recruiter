@@ -7,6 +7,7 @@ import {
   registerStart,
   registerSuccess,
   registerFailure,
+  clearAuthError,
 } from "../../store/slices/authSlice";
 
 function Register() {
@@ -24,6 +25,7 @@ function Register() {
   });
 
   const [errors, setErrors] = useState({});
+  const [successMessage, setSuccessMessage] = useState("");
 
   function handleChange(event) {
     const { name, value } = event.target;
@@ -33,11 +35,22 @@ function Register() {
       [name]: value,
     }));
 
+    // Clear the field's validation error.
     if (errors[name]) {
       setErrors((current) => ({
         ...current,
         [name]: "",
       }));
+    }
+
+    // Clear the general authentication error.
+    if (error) {
+      dispatch(clearAuthError());
+    }
+
+    // Clear the success message when the user edits the form.
+    if (successMessage) {
+      setSuccessMessage("");
     }
   }
 
@@ -73,8 +86,12 @@ function Register() {
     return newErrors;
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
+
+    if (isLoading) {
+      return;
+    }
 
     const validationErrors = validateForm();
 
@@ -84,26 +101,32 @@ function Register() {
     }
 
     setErrors({});
-
+    setSuccessMessage("");
     dispatch(registerStart());
 
     // Temporary registration simulation.
-    // The real backend API can replace this later.
+    // The backend API will replace this later.
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    const user = {
+      id: 1,
+      name: formData.name.trim(),
+      email: formData.email.trim(),
+      role: formData.role,
+    };
+
+    dispatch(
+      registerSuccess({
+        user,
+        token: "temporary-demo-token",
+      })
+    );
+
+    setSuccessMessage(
+      "Account created successfully. Redirecting to login..."
+    );
+
     setTimeout(() => {
-      const user = {
-        id: 1,
-        name: formData.name,
-        email: formData.email,
-        role: formData.role,
-      };
-
-      dispatch(
-        registerSuccess({
-          user,
-          token: "temporary-demo-token",
-        })
-      );
-
       navigate("/login");
     }, 1000);
   }
@@ -127,7 +150,17 @@ function Register() {
             </p>
           </div>
 
-          {/* Authentication error */}
+          {/* Success message */}
+          {successMessage && (
+            <div
+              role="status"
+              className="mb-5 rounded-lg border border-[#2FD5A6]/30 bg-[#2FD5A6]/10 px-4 py-3 text-sm text-[#2FD5A6]"
+            >
+              {successMessage}
+            </div>
+          )}
+
+          {/* General authentication error */}
           {error && (
             <div
               role="alert"
