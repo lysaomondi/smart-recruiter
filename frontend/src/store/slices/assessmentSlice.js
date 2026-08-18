@@ -6,6 +6,29 @@ export const loadAssessments = createAsyncThunk(
   async () => await assessmentService.fetchAssessments()
 );
 
+export const loadAssessmentById = createAsyncThunk(
+  "assessments/loadOne",
+  async (id) => await assessmentService.fetchAssessmentById(id)
+);
+
+export const createNewAssessment = createAsyncThunk(
+  "assessments/create",
+  async (payload) => await assessmentService.createAssessment(payload)
+);
+
+export const publish = createAsyncThunk(
+  "assessments/publish",
+  async (id) => await assessmentService.publishAssessment(id)
+);
+
+export const addQuestionToAssessment = createAsyncThunk(
+  "assessments/addQuestion",
+  async ({ assessmentId, question }) => {
+    const newQuestion = await assessmentService.addQuestion(assessmentId, question);
+    return { assessmentId, newQuestion };
+  }
+);
+
 const initialState = {
   items: [],
   active: null,
@@ -16,7 +39,11 @@ const initialState = {
 const assessmentSlice = createSlice({
   name: "assessments",
   initialState,
-  reducers: {},
+  reducers: {
+    clearActiveAssessment(state) {
+      state.active = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(loadAssessments.pending, (state) => {
@@ -29,8 +56,30 @@ const assessmentSlice = createSlice({
       .addCase(loadAssessments.rejected, (state, action) => {
         state.status = "failed";
         state.error = action.error.message;
+      })
+      .addCase(loadAssessmentById.fulfilled, (state, action) => {
+        state.active = action.payload;
+      })
+      .addCase(createNewAssessment.fulfilled, (state, action) => {
+        state.items.unshift(action.payload);
+        state.active = action.payload;
+      })
+      .addCase(publish.fulfilled, (state, action) => {
+        state.active = action.payload;
+        state.items = state.items.map((a) =>
+          a.id === action.payload.id ? action.payload : a
+        );
+      })
+      .addCase(addQuestionToAssessment.fulfilled, (state, action) => {
+        const { assessmentId, newQuestion } = action.payload;
+        if (state.active?.id === assessmentId) {
+          state.active.questions.push(newQuestion);
+        }
+        const inList = state.items.find((a) => a.id === assessmentId);
+        if (inList) inList.questions.push(newQuestion);
       });
   },
 });
 
+export const { clearActiveAssessment } = assessmentSlice.actions;
 export default assessmentSlice.reducer;
