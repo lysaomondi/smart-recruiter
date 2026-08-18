@@ -1,7 +1,11 @@
+import ResultHeader from "../../components/results/ResultHeader";
+import AssessmentResultCard from "../../components/results/AssessmentResultCard";
 import ScoreOverview from "../../components/results/ScoreOverview";
 import PerformanceStats from "../../components/results/PerformanceStats";
 import SkillBreakdown from "../../components/results/SkillBreakdown";
 import FeedbackCard from "../../components/results/FeedbackCard";
+import RankingCard from "../../components/results/RankingCard";
+
 import { mockResult } from "../../utils/mockResults";
 
 function CandidateResults() {
@@ -9,32 +13,21 @@ function CandidateResults() {
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      {/* Header */}
-      <div className="mb-8">
-        <p className="text-sm font-medium text-indigo-600">
-          Assessment Results
-        </p>
+      <ResultHeader result={result} />
 
-        <h1 className="mt-1 text-2xl font-bold text-gray-900 sm:text-3xl">
-          {result.candidate.name}
-        </h1>
+      <div className="space-y-8">
+        <AssessmentResultCard result={result} />
 
-        <p className="mt-2 text-sm text-gray-500">
-          {result.assessment.title}
-        </p>
+        <ScoreOverview result={result} />
+
+        <PerformanceStats result={result} />
+
+        <SkillBreakdown skills={result.skills} />
+
+        <RankingCard ranking={result.ranking} />
+
+        <FeedbackCard feedback={result.feedback} />
       </div>
-
-      {/* Overall score */}
-      <ScoreOverview result={result} />
-
-      {/* Statistics */}
-      <PerformanceStats result={result} />
-
-      {/* Skills */}
-      <SkillBreakdown skills={result.skills} />
-
-      {/* Feedback */}
-      <FeedbackCard feedback={result.feedback} />
     </div>
   );
 }
