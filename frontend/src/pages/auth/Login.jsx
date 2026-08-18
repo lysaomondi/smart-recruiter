@@ -35,7 +35,7 @@ function Login() {
     return newErrors;
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
 
     const validationErrors = validateForm();
@@ -46,36 +46,35 @@ function Login() {
     }
 
     setErrors({});
-
     dispatch(loginStart());
 
     // Temporary authentication simulation.
-    // The real Flask API will replace this later.
-    setTimeout(() => {
-      if (email === "najib@gmail.com" && password === "password123") {
-        const user = {
-  id: 1,
-  name: "Test User",
-  email: email,
-  role: "interviewee",
-};
+    // The Flask backend will replace this later.
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-dispatch(
-  loginSuccess({
-    user,
-    token: "temporary-demo-token",
-  })
-);
+    if (email === "najib@gmail.com" && password === "password123") {
+      const user = {
+        id: 1,
+        name: "Test User",
+        email: email,
+        role: "interviewee",
+      };
 
-if (user.role === "recruiter") {
-  navigate("/recruiter");
-} else {
-  navigate("/interviewee");
-}
+      dispatch(
+        loginSuccess({
+          user,
+          token: "temporary-demo-token",
+        })
+      );
+
+      if (user.role === "recruiter") {
+        navigate("/recruiter");
       } else {
-        dispatch(loginFailure("Invalid email or password."));
+        navigate("/interviewee");
       }
-    }, 1000);
+    } else {
+      dispatch(loginFailure("Invalid email or password."));
+    }
   }
 
   return (
@@ -134,7 +133,9 @@ if (user.role === "recruiter") {
                 }}
                 placeholder="you@example.com"
                 aria-invalid={Boolean(errors.email)}
-                aria-describedby={errors.email ? "email-error" : undefined}
+                aria-describedby={
+                  errors.email ? "email-error" : undefined
+                }
                 className={`w-full rounded-lg border bg-[#0F1830] px-4 py-3 text-[#F1F3F6] outline-none transition placeholder:text-[#F1F3F6]/40 focus:ring-2 ${
                   errors.email
                     ? "border-[#E85C4A] focus:border-[#E85C4A] focus:ring-[#E85C4A]/20"
