@@ -1,17 +1,11 @@
 import { Routes, Route } from "react-router-dom";
+import Codewars from "../pages/Codewars";
 
 function AppRoutes() {
   return (
     <Routes>
-      <Route
-        path="/"
-        element={
-          <div>
-            <h1>Smart Recruiter</h1>
-            <p>Results Dashboard</p>
-          </div>
-        }
-      />
+      <Route path="/" element={<Codewars />} />
+      <Route path="/codewars" element={<Codewars />} />
     </Routes>
   );
 }
