@@ -1,24 +1,24 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
 
-import PasswordInput from "../../components/auth/PasswordInput";
 import {
   loginStart,
   loginSuccess,
   loginFailure,
 } from "../../store/slices/authSlice";
+import { setActiveTab } from "../../store/slices/activeTabSlice";
 
 function Login() {
   const dispatch = useDispatch();
-  const navigate = useNavigate();
 
-  const { isLoading, error } = useSelector((state) => state.auth);
+  const { isLoading } = useSelector((state) => state.auth);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [errors, setErrors] = useState({});
+  const [error, setError] = useState("");
 
+  // Check the values entered before looking for a saved user.
   function validateForm() {
     const newErrors = {};
 
@@ -35,7 +35,7 @@ function Login() {
     return newErrors;
   }
 
-  async function handleSubmit(event) {
+  function handleSubmit(event) {
     event.preventDefault();
 
     const validationErrors = validateForm();
@@ -46,41 +46,38 @@ function Login() {
     }
 
     setErrors({});
+    setError("");
     dispatch(loginStart());
 
-    // Temporary authentication simulation.
-    // The Flask backend will replace this later.
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+    // Read the locally saved accounts and find the entered email address.
+    const users = JSON.parse(localStorage.getItem("users") || "[]");
+    const user = users.find(
+      (u) => u.email.toLowerCase() === email.toLowerCase()
+    );
 
-    if (email === "najib@gmail.com" && password === "password123") {
-      const user = {
-        id: 1,
-        name: "Test User",
-        email: email,
-        role: "interviewee",
-      };
-
-      dispatch(
-        loginSuccess({
-          user,
-          token: "temporary-demo-token",
-        })
-      );
-
-      if (user.role === "recruiter") {
-        navigate("/recruiter");
-      } else {
-        navigate("/interviewee");
-      }
-    } else {
+    if (!user || user.password !== password) {
+      setError("Invalid email or password.");
       dispatch(loginFailure("Invalid email or password."));
+      return;
+    }
+
+    const loggedInUser = { ...user };
+
+    // Save the session, update Redux, and open the user's dashboard.
+    localStorage.setItem("currentUser", JSON.stringify(loggedInUser));
+    dispatch(loginSuccess(loggedInUser));
+
+    if (loggedInUser.role === "recruiter") {
+      dispatch(setActiveTab("recruiter-dashboard"));
+    } else {
+      dispatch(setActiveTab("interviewee-dashboard"));
     }
   }
 
   return (
-    <main className="min-h-screen bg-[#0F1830] px-4 py-8 text-[#F1F3F6] sm:px-6">
+    <main className="min-h-screen bg-[#F1F3F6] px-4 py-8 text-[#F1F3F6] sm:px-6">
       <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
-        <section className="w-full max-w-md rounded-2xl border border-[#1A2547] bg-[#1A2547] p-6 shadow-2xl sm:p-8">
+        <section className="w-full max-w-md rounded-2xl bg-[#1A2547] p-6 shadow-2xl sm:p-8">
           {/* Header */}
           <div className="mb-8 text-center">
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-[#2FD5A6]">
@@ -106,7 +103,7 @@ function Login() {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-5" noValidate>
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* Email */}
             <div>
               <label
@@ -120,6 +117,7 @@ function Login() {
                 id="email"
                 name="email"
                 type="email"
+                required
                 value={email}
                 onChange={(event) => {
                   setEmail(event.target.value);
@@ -155,7 +153,18 @@ function Login() {
 
             {/* Password */}
             <div>
-              <PasswordInput
+              <label
+                htmlFor="password"
+                className="mb-2 block text-sm font-medium"
+              >
+                Password
+              </label>
+
+              <input
+                id="password"
+                name="password"
+                type="password"
+                required
                 value={password}
                 onChange={(event) => {
                   setPassword(event.target.value);
@@ -167,10 +176,20 @@ function Login() {
                     }));
                   }
                 }}
+                placeholder="Enter your password"
+                aria-invalid={Boolean(errors.password)}
+                aria-describedby={
+                  errors.password ? "password-error" : undefined
+                }
+                className={`w-full rounded-lg border bg-[#0F1830] px-4 py-3 text-[#F1F3F6] outline-none transition placeholder:text-[#F1F3F6]/40 focus:ring-2 ${
+                  errors.password
+                    ? "border-[#E85C4A] focus:border-[#E85C4A] focus:ring-[#E85C4A]/20"
+                    : "border-[#0F1830] focus:border-[#2FD5A6] focus:ring-[#2FD5A6]/20"
+                }`}
               />
 
               {errors.password && (
-                <p className="mt-2 text-sm text-[#E85C4A]">
+                <p id="password-error" className="mt-2 text-sm text-[#E85C4A]">
                   {errors.password}
                 </p>
               )}
@@ -189,12 +208,13 @@ function Login() {
           {/* Register link */}
           <p className="mt-6 text-center text-sm text-[#F1F3F6]/60">
             Don't have an account?{" "}
-            <Link
-              to="/register"
+            <button
+              type="button"
+              onClick={() => dispatch(setActiveTab("register"))}
               className="font-semibold text-[#2FD5A6] transition hover:text-[#F1F3F6]"
             >
               Register
-            </Link>
+            </button>
           </p>
         </section>
       </div>
