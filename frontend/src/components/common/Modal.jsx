@@ -20,7 +20,6 @@ function Modal({ isOpen, onClose, children }) {
         >
           ×
         </button>
-
         {children}
       </div>
     </div>

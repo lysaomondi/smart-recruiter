@@ -16,7 +16,6 @@ export const getCompletedChallenges = async (userId, page = 0) => {
       params: { page },
     }
   );
-
   return response.data;
 };
 
@@ -24,7 +23,6 @@ export const getAuthoredChallenges = async (userId) => {
   const response = await codewarsApi.get(
     `/users/${userId}/code-challenges/authored`
   );
-
   return response.data;
 };
 
@@ -32,6 +30,5 @@ export const getCodeChallenge = async (challenge) => {
   const response = await codewarsApi.get(
     `/code-challenges/${challenge}`
   );
-
   return response.data;
 };

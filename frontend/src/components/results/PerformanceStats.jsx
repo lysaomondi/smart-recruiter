@@ -28,12 +28,10 @@ function PerformanceStats({ result }) {
         <h2 className="text-lg font-semibold text-gray-900">
           Performance Statistics
         </h2>
-
         <p className="mt-1 text-sm text-gray-500">
           Overview of the candidate's assessment performance.
         </p>
       </div>
-
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {stats.map((stat) => (
           <div
@@ -43,11 +41,9 @@ function PerformanceStats({ result }) {
             <p className="text-sm font-medium text-gray-500">
               {stat.label}
             </p>
-
             <p className="mt-2 text-2xl font-bold text-gray-900">
               {stat.value}
             </p>
-
             <p className="mt-1 text-xs text-gray-500">
               {stat.description}
             </p>

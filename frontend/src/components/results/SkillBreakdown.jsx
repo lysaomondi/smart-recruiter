@@ -5,12 +5,10 @@ function SkillBreakdown({ skills = [] }) {
         <h2 className="text-lg font-semibold text-gray-900">
           Skill Breakdown
         </h2>
-
         <p className="mt-1 text-sm text-gray-500">
           Performance across the assessed technical skills.
         </p>
       </div>
-
       <div className="space-y-6">
         {skills.length === 0 ? (
           <p className="text-sm text-gray-500">
@@ -29,12 +27,10 @@ function SkillBreakdown({ skills = [] }) {
                   <span className="text-sm font-medium text-gray-700">
                     {skill.name}
                   </span>
-
                   <span className="text-sm font-semibold text-gray-900">
                     {score}%
                   </span>
                 </div>
-
                 <div className="h-2 overflow-hidden rounded-full bg-gray-100">
                   <div
                     className="h-full rounded-full bg-indigo-600 transition-all"

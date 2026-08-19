@@ -10,21 +10,17 @@ function AssessmentResultCard({ result }) {
           <p className="text-sm font-medium text-gray-500">
             Assessment
           </p>
-
           <h2 className="mt-1 text-lg font-semibold text-gray-900">
             {result.assessment?.title || "Assessment"}
           </h2>
-
           <p className="mt-1 text-sm text-gray-500">
             Candidate: {result.candidate?.name || "Unknown"}
           </p>
         </div>
-
         <div className="rounded-xl bg-indigo-50 px-4 py-3 text-center">
           <p className="text-xs font-medium text-indigo-600">
             Grade
           </p>
-
           <p className="mt-1 text-2xl font-bold text-indigo-700">
             {result.grade || "N/A"}
           </p>

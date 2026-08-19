@@ -11,9 +11,7 @@ function ChallengeCard({ challenge }) {
     try {
       setLoading(true);
       setError("");
-
       const data = await getCodeChallenge(challenge.id);
-
       setDetails(data);
     } catch (err) {
       console.error("Challenge details error:", err);
@@ -36,14 +34,12 @@ function ChallengeCard({ challenge }) {
             <h3 className="font-semibold text-gray-900">
               {challenge.name}
             </h3>
-
             <p className="mt-1 text-sm text-gray-500">
               Completed on{" "}
               {new Date(
                 challenge.completedAt
               ).toLocaleDateString()}
             </p>
-
             <div className="mt-3 flex flex-wrap gap-2">
               {challenge.completedLanguages.map(
                 (language) => (
@@ -57,7 +53,6 @@ function ChallengeCard({ challenge }) {
               )}
             </div>
           </div>
-
           <button
             type="button"
             onClick={handleViewDetails}
@@ -68,7 +63,6 @@ function ChallengeCard({ challenge }) {
           </button>
         </div>
       </div>
-
       {details && (
         <Modal
           isOpen={true}
@@ -80,68 +74,56 @@ function ChallengeCard({ challenge }) {
                 <h2 className="text-xl font-bold text-gray-900">
                   {details.name}
                 </h2>
-
                 {details.rank && (
                   <span className="rounded-full bg-indigo-50 px-3 py-1 text-xs font-medium text-indigo-700">
                     {details.rank.name}
                   </span>
                 )}
               </div>
-
               <p className="mt-2 text-sm text-gray-500">
                 {details.category}
               </p>
             </div>
-
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="rounded-lg bg-gray-50 p-4">
                 <p className="text-sm text-gray-500">
                   Total Attempts
                 </p>
-
                 <p className="mt-1 text-xl font-bold text-gray-900">
                   {details.totalAttempts?.toLocaleString() ||
                     "N/A"}
                 </p>
               </div>
-
               <div className="rounded-lg bg-gray-50 p-4">
                 <p className="text-sm text-gray-500">
                   Total Completed
                 </p>
-
                 <p className="mt-1 text-xl font-bold text-gray-900">
                   {details.totalCompleted?.toLocaleString() ||
                     "N/A"}
                 </p>
               </div>
-
               <div className="rounded-lg bg-gray-50 p-4">
                 <p className="text-sm text-gray-500">
                   Stars
                 </p>
-
                 <p className="mt-1 text-xl font-bold text-gray-900">
                   {details.totalStars ?? "N/A"}
                 </p>
               </div>
-
               <div className="rounded-lg bg-gray-50 p-4">
                 <p className="text-sm text-gray-500">
                   Vote Score
                 </p>
-
                 <p className="mt-1 text-xl font-bold text-gray-900">
                   {details.voteScore ?? "N/A"}
                 </p>
               </div>
             </div>
-
             <div className="mt-6">
               <h3 className="font-semibold text-gray-900">
                 Languages
               </h3>
-
               <div className="mt-3 flex flex-wrap gap-2">
                 {details.languages?.map((language) => (
                   <span
@@ -153,13 +135,11 @@ function ChallengeCard({ challenge }) {
                 ))}
               </div>
             </div>
-
             {details.tags?.length > 0 && (
               <div className="mt-6">
                 <h3 className="font-semibold text-gray-900">
                   Tags
                 </h3>
-
                 <div className="mt-3 flex flex-wrap gap-2">
                   {details.tags.map((tag) => (
                     <span
@@ -172,18 +152,15 @@ function ChallengeCard({ challenge }) {
                 </div>
               </div>
             )}
-
             <div className="mt-6">
               <h3 className="font-semibold text-gray-900">
                 Description
               </h3>
-
               <div className="mt-3 rounded-lg bg-gray-50 p-4 text-sm leading-6 text-gray-600">
                 {details.description ||
                   "No description available."}
               </div>
             </div>
-
             {details.url && (
               <div className="mt-6">
                 <a
@@ -199,7 +176,6 @@ function ChallengeCard({ challenge }) {
           </div>
         </Modal>
       )}
-
       {error && (
         <div className="mt-2 rounded-lg bg-red-50 p-3 text-sm text-red-600">
           {error}

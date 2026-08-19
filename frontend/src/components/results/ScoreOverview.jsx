@@ -8,36 +8,30 @@ function ScoreOverview({ result }) {
           <p className="text-sm font-medium text-gray-500">
             Overall Score
           </p>
-
           <div className="mt-2 flex items-end gap-2">
             <span className="text-4xl font-bold text-gray-900">
               {percentage}%
             </span>
-
             <span className="mb-1 text-sm text-gray-500">
               overall
             </span>
           </div>
-
           <p className="mt-2 text-sm text-gray-500">
             {result?.correctAnswers ?? 0} of{" "}
             {result?.totalQuestions ?? 0} questions correct
           </p>
         </div>
-
         <div className="flex h-24 w-24 items-center justify-center rounded-full border-8 border-indigo-100">
           <span className="text-xl font-bold text-indigo-600">
             {percentage}%
           </span>
         </div>
       </div>
-
       <div className="mt-6">
         <div className="mb-2 flex justify-between text-xs font-medium text-gray-500">
           <span>Performance</span>
           <span>{percentage}%</span>
         </div>
-
         <div className="h-2 overflow-hidden rounded-full bg-gray-100">
           <div
             className="h-full rounded-full bg-indigo-600 transition-all"

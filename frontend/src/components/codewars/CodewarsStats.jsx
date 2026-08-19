@@ -28,7 +28,6 @@ function CodewarsStats({ user }) {
           <p className="text-sm font-medium text-gray-500">
             {stat.label}
           </p>
-
           <p className="mt-2 text-2xl font-bold text-gray-900">
             {stat.value}
           </p>
