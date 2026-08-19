@@ -14,6 +14,8 @@ function Register() {
     role: "interviewee",
   });
   const [errors, setErrors] = useState({});
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   // Check each field before attempting to save the new user.
   function validateForm() {
@@ -124,13 +126,23 @@ function Register() {
 
             <div>
               <label htmlFor="password" className="mb-2 block text-sm font-medium">Password</label>
-              <input id="password" name="password" type="password" required value={formData.password} onChange={handleChange} placeholder="At least 6 characters" className={inputClassName(errors.password)} />
+              <div className="relative">
+                <input id="password" name="password" type={showPassword ? "text" : "password"} required value={formData.password} onChange={handleChange} placeholder="At least 6 characters" className={`${inputClassName(errors.password)} pr-20`} />
+                <button type="button" onClick={() => setShowPassword((current) => !current)} className="absolute right-3 top-1/2 -translate-y-1/2 px-2 py-1 text-sm font-medium text-[#2FD5A6] transition hover:text-[#F1F3F6]">
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
               {errors.password && <p className="mt-2 text-sm text-[#E85C4A]">{errors.password}</p>}
             </div>
 
             <div>
               <label htmlFor="confirmPassword" className="mb-2 block text-sm font-medium">Confirm password</label>
-              <input id="confirmPassword" name="confirmPassword" type="password" required value={formData.confirmPassword} onChange={handleChange} placeholder="Re-enter your password" className={inputClassName(errors.confirmPassword)} />
+              <div className="relative">
+                <input id="confirmPassword" name="confirmPassword" type={showConfirmPassword ? "text" : "password"} required value={formData.confirmPassword} onChange={handleChange} placeholder="Re-enter your password" className={`${inputClassName(errors.confirmPassword)} pr-20`} />
+                <button type="button" onClick={() => setShowConfirmPassword((current) => !current)} className="absolute right-3 top-1/2 -translate-y-1/2 px-2 py-1 text-sm font-medium text-[#2FD5A6] transition hover:text-[#F1F3F6]">
+                  {showConfirmPassword ? "Hide" : "Show"}
+                </button>
+              </div>
               {errors.confirmPassword && <p className="mt-2 text-sm text-[#E85C4A]">{errors.confirmPassword}</p>}
             </div>
 

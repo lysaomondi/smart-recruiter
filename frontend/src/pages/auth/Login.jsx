@@ -15,6 +15,7 @@ function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
   const [error, setError] = useState("");
 
@@ -160,33 +161,42 @@ function Login() {
                 Password
               </label>
 
-              <input
-                id="password"
-                name="password"
-                type="password"
-                required
-                value={password}
-                onChange={(event) => {
-                  setPassword(event.target.value);
+              <div className="relative">
+                <input
+                  id="password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  required
+                  value={password}
+                  onChange={(event) => {
+                    setPassword(event.target.value);
 
-                  if (errors.password) {
-                    setErrors((current) => ({
-                      ...current,
-                      password: "",
-                    }));
+                    if (errors.password) {
+                      setErrors((current) => ({
+                        ...current,
+                        password: "",
+                      }));
+                    }
+                  }}
+                  placeholder="Enter your password"
+                  aria-invalid={Boolean(errors.password)}
+                  aria-describedby={
+                    errors.password ? "password-error" : undefined
                   }
-                }}
-                placeholder="Enter your password"
-                aria-invalid={Boolean(errors.password)}
-                aria-describedby={
-                  errors.password ? "password-error" : undefined
-                }
-                className={`w-full rounded-lg border bg-[#0F1830] px-4 py-3 text-[#F1F3F6] outline-none transition placeholder:text-[#F1F3F6]/40 focus:ring-2 ${
-                  errors.password
-                    ? "border-[#E85C4A] focus:border-[#E85C4A] focus:ring-[#E85C4A]/20"
-                    : "border-[#0F1830] focus:border-[#2FD5A6] focus:ring-[#2FD5A6]/20"
-                }`}
-              />
+                  className={`w-full rounded-lg border bg-[#0F1830] px-4 py-3 pr-20 text-[#F1F3F6] outline-none transition placeholder:text-[#F1F3F6]/40 focus:ring-2 ${
+                    errors.password
+                      ? "border-[#E85C4A] focus:border-[#E85C4A] focus:ring-[#E85C4A]/20"
+                      : "border-[#0F1830] focus:border-[#2FD5A6] focus:ring-[#2FD5A6]/20"
+                  }`}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((current) => !current)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 px-2 py-1 text-sm font-medium text-[#2FD5A6] transition hover:text-[#F1F3F6]"
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
 
               {errors.password && (
                 <p id="password-error" className="mt-2 text-sm text-[#E85C4A]">
