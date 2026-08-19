@@ -4,9 +4,7 @@ export default function Navbar({ role = "recruiter", onLogout }) {
   return (
     <div className="sticky top-0 z-50 flex items-center justify-between border-b border-line bg-panel px-6 py-3.5">
       <div className="flex items-center gap-2.5">
-        <div className="flex h-8 w-8 items-center justify-center rounded-md bg-gradient-to-br from-brand-teal to-brand-amber font-mono text-sm font-bold text-ink">
-          SR
-        </div>
+       
         <div>
           <div className="text-[15px] font-extrabold tracking-tight text-paper">Smart Recruiter</div>
           <div className="font-mono text-[11px] tracking-wide text-muted">TECHNICAL ASSESSMENT PLATFORM</div>
