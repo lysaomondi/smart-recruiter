@@ -26,5 +26,10 @@
     "@vitejs/plugin-react": "^6.0.5",
     "jest": "^30.4.2",
     "vite": "^8.2.1"
-  }
+  },
+  "description": "",
+  "main": "vite.config.js",
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }
