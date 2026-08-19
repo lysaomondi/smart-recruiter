@@ -1,29 +1,24 @@
 import { Routes, Route } from "react-router-dom";
-
 import Codewars from "../pages/Codewars";
-
+import CandidateResults from "../pages/results/CandidateResults";
+import ResultsDashboard from "../pages/results/ResultsDashboard";
 import RecruiterResults from "../pages/recruiter/Results";
-import CandidateResult from "../pages/recruiter/CandidateResult";
-import CandidateFeedback from "../pages/recruiter/CandidateFeedback";
-
 import MyResults from "../pages/interviewee/MyResults";
 
 function AppRoutes() {
   return (
     <Routes>
+      <Route path="/" element={<Codewars />} />
+      <Route path="/codewars" element={<Codewars />} />
+
       <Route
         path="/recruiter/results"
         element={<RecruiterResults />}
       />
 
       <Route
-        path="/recruiter/results/:candidateId"
-        element={<CandidateResult />}
-      />
-
-      <Route
-        path="/recruiter/results/:candidateId/feedback"
-        element={<CandidateFeedback />}
+        path="/recruiter/results/candidates/:id"
+        element={<CandidateResults />}
       />
 
       <Route
@@ -32,9 +27,16 @@ function AppRoutes() {
       />
 
       <Route
-        path="/codewars"
-        element={<Codewars />}
+        path="/results"
+        element={<ResultsDashboard />}
+      />
+
+      <Route
+        path="/results/candidates/:id"
+        element={<CandidateResults />}
       />
     </Routes>
   );
 }
+
+export default AppRoutes;

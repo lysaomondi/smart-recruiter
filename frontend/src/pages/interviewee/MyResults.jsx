@@ -10,7 +10,6 @@ function MyResults() {
 
   return (
     <div className="mx-auto w-full max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-      {/* Header */}
       <div className="mb-8">
         <p className="text-sm font-medium text-indigo-600">
           My Results
@@ -25,7 +24,6 @@ function MyResults() {
         </p>
       </div>
 
-      {/* Result summary */}
       <div className="space-y-8">
         <ScoreOverview result={result} />
 
@@ -36,7 +34,6 @@ function MyResults() {
         <FeedbackCard feedback={result.feedback} />
       </div>
 
-      {/* Codewars */}
       <div className="mt-8 rounded-2xl border border-gray-200 bg-white p-6 shadow-sm">
         <div>
           <h2 className="text-lg font-semibold text-gray-900">

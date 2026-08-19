@@ -1,40 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  results: [
-    {
-      id: 1,
-      candidate: "Jordan Smith",
-      email: "jordan@example.com",
-      score: 94,
-      grade: "A",
-      status: "Passed",
-    },
-    {
-      id: 2,
-      candidate: "Alex Brown",
-      email: "alex@example.com",
-      score: 89,
-      grade: "A",
-      status: "Passed",
-    },
-    {
-      id: 3,
-      candidate: "Sam Wilson",
-      email: "sam@example.com",
-      score: 76,
-      grade: "B",
-      status: "Passed",
-    },
-    {
-      id: 4,
-      candidate: "John Doe",
-      email: "john@example.com",
-      score: 58,
-      grade: "C",
-      status: "Failed",
-    },
-  ],
+  results: [],
+  currentResult: null,
   loading: false,
   error: null,
 };
@@ -42,7 +10,41 @@ const initialState = {
 const resultsSlice = createSlice({
   name: "results",
   initialState,
-  reducers: {},
+
+  reducers: {
+    setResults(state, action) {
+      state.results = action.payload;
+    },
+
+    setCurrentResult(state, action) {
+      state.currentResult = action.payload;
+    },
+
+    clearCurrentResult(state) {
+      state.currentResult = null;
+    },
+
+    setResultsLoading(state, action) {
+      state.loading = action.payload;
+    },
+
+    setResultsError(state, action) {
+      state.error = action.payload;
+    },
+
+    clearResultsError(state) {
+      state.error = null;
+    },
+  },
 });
+
+export const {
+  setResults,
+  setCurrentResult,
+  clearCurrentResult,
+  setResultsLoading,
+  setResultsError,
+  clearResultsError,
+} = resultsSlice.actions;
 
 export default resultsSlice.reducer;
