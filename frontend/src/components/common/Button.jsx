@@ -1,10 +1,12 @@
 import React from "react";
 
 const VARIANTS = {
-  primary: "bg-brand-amber text-[#241705] hover:bg-amber-300",
-  teal: "bg-brand-teal text-[#04241A] hover:bg-emerald-300",
-  outline: "bg-transparent border border-paper-line text-ink hover:bg-gray-100",
-  danger: "bg-brand-crimson text-white hover:bg-red-500",
+  primary: "bg-brand-amber text-ink hover:opacity-90",
+  teal: "bg-brand-teal text-ink hover:opacity-90",
+  secondary: "bg-paper text-ink hover:bg-panel/10",
+  success: "bg-brand-teal text-ink hover:opacity-90",
+  outline: "bg-transparent border border-panel/30 text-ink hover:bg-panel/10",
+  danger: "bg-brand-crimson text-paper hover:opacity-90",
 };
 
 export default function Button({

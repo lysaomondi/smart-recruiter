@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import { setActiveTab } from "../../store/slices/activeTabSlice";
 
 function Register() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
     name: "",
@@ -86,6 +88,7 @@ function Register() {
 
     localStorage.setItem("users", JSON.stringify([...users, newUser]));
     dispatch(setActiveTab("login"));
+    navigate("/login");
   }
 
   const inputClassName = (hasError) =>
@@ -161,7 +164,7 @@ function Register() {
 
           <p className="mt-6 text-center text-sm text-[#F1F3F6]/60">
             Already have an account?{" "}
-            <button type="button" onClick={() => dispatch(setActiveTab("login"))} className="font-semibold text-[#2FD5A6] transition hover:text-[#F1F3F6]">
+            <button type="button" onClick={() => navigate("/login")} className="font-semibold text-[#2FD5A6] transition hover:text-[#F1F3F6]">
               Sign in
             </button>
           </p>

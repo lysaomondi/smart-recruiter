@@ -109,3 +109,106 @@ export async function fetchCodewarsKata() {
     difficulty: "6 kyu",
   };
 }
+
+// Interviewee mock API. The backend directory currently contains route
+// scaffolds only, so these keep the interviewee flow usable during local
+// development without requesting an unavailable localhost server.
+const INTERVIEWEE_ASSESSMENTS = [
+  {
+    id: "ia1",
+    title: "Frontend Fundamentals Assessment",
+    description: "A short assessment covering React and JavaScript basics.",
+    status: "upcoming",
+    startDate: "2026-08-25T09:00:00Z",
+    duration: 30,
+    totalPoints: 30,
+    technologies: ["React", "JavaScript"],
+    questions: [
+      {
+        id: "iaq1",
+        type: "multiple_choice",
+        text: "Which hook is used to manage component state?",
+        options: ["useState", "useMemo", "useContext", "useRef"],
+        points: 10,
+      },
+      {
+        id: "iaq2",
+        type: "subjective",
+        text: "Describe the purpose of a React component key.",
+        points: 10,
+      },
+      {
+        id: "iaq3",
+        type: "coding",
+        text: "Outline how you would reverse an array without mutating it.",
+        points: 10,
+      },
+    ],
+  },
+  {
+    id: "ia2",
+    title: "JavaScript Screening",
+    status: "completed",
+    score: 84,
+    duration: 20,
+    questions: [],
+  },
+];
+
+const TRIAL_ASSESSMENT = {
+  id: "trial",
+  duration: 15,
+  questions: [
+    {
+      id: "trial-q1",
+      type: "multiple_choice",
+      text: "What does CSS stand for?",
+      options: ["Cascading Style Sheets", "Computer Style Syntax", "Code Styling System"],
+      points: 5,
+    },
+    {
+      id: "trial-q2",
+      type: "subjective",
+      text: "Briefly explain the difference between let and const.",
+      points: 5,
+    },
+  ],
+};
+
+const assessmentService = {
+  getMyAssessments: async () => {
+    await delay();
+    return INTERVIEWEE_ASSESSMENTS.map((assessment) => ({ ...assessment }));
+  },
+  getAssessmentById: async (assessmentId) => {
+    await delay();
+    const assessment = INTERVIEWEE_ASSESSMENTS.find(({ id }) => id === assessmentId);
+    if (!assessment) throw new Error("Assessment not found");
+    return { ...assessment };
+  },
+  startAttempt: async (assessmentId) => {
+    await delay();
+    const assessment = INTERVIEWEE_ASSESSMENTS.find(({ id }) => id === assessmentId);
+    if (!assessment) throw new Error("Assessment not found");
+    return { id: `attempt-${assessmentId}`, assessmentId, timeRemaining: assessment.duration * 60, answers: [] };
+  },
+  submitAnswer: async (attemptId, questionId, answerData) => {
+    await delay();
+    return { attemptId, questionId, ...answerData };
+  },
+  submitAssessment: async (attemptId) => {
+    await delay();
+    return { attemptId, submitted: true };
+  },
+  getAttemptStatus: async (attemptId) => ({ attemptId, submitted: false }),
+  getTrialAssessment: async () => {
+    await delay();
+    return { ...TRIAL_ASSESSMENT };
+  },
+  submitTrialAssessment: async (answers) => {
+    await delay();
+    return { submitted: true, answers };
+  },
+};
+
+export default assessmentService;

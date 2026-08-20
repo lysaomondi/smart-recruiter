@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 
 import {
   loginStart,
@@ -10,6 +11,7 @@ import { setActiveTab } from "../../store/slices/activeTabSlice";
 
 function Login() {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const { isLoading } = useSelector((state) => state.auth);
 
@@ -70,8 +72,10 @@ function Login() {
 
     if (loggedInUser.role === "recruiter") {
       dispatch(setActiveTab("recruiter-dashboard"));
+      navigate("/recruiter/dashboard");
     } else {
       dispatch(setActiveTab("interviewee-dashboard"));
+      navigate("/interviewee/dashboard");
     }
   }
 
@@ -220,7 +224,7 @@ function Login() {
             Don't have an account?{" "}
             <button
               type="button"
-              onClick={() => dispatch(setActiveTab("register"))}
+              onClick={() => navigate("/register")}
               className="font-semibold text-[#2FD5A6] transition hover:text-[#F1F3F6]"
             >
               Register

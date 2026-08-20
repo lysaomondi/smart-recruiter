@@ -3,21 +3,86 @@
 @theme {
   --color-ink: #0F1830;
   --color-panel: #1A2547;
-  --color-panel-2: #212D54;
-  --color-line: #2E3A63;
+  --color-panel-2: #1A2547;
+  --color-line: #1A2547;
   --color-paper: #F1F3F6;
-  --color-paper-line: #DDE2EA;
-  --color-muted: #8C97BE;
-  --color-muted-2: #6B7594;
+  --color-paper-line: #1A2547;
+  --color-muted: #1A2547;
+  --color-muted-2: #1A2547;
   --color-brand-teal: #2FD5A6;
-  --color-teal-dim: #1B7F63;
+  --color-teal-dim: #2FD5A6;
   --color-brand-amber: #F2A93B;
-  --color-amber-dim: #8A5E1C;
+  --color-amber-dim: #F2A93B;
   --color-brand-crimson: #E85C4A;
-  --color-crimson-dim: #8C3226;
+  --color-crimson-dim: #E85C4A;
+
+  /* Map legacy Tailwind utility families to the approved project palette. */
+  --color-white: #F1F3F6;
+  --color-black: #0F1830;
+  --color-gray-50: #F1F3F6;
+  --color-gray-100: #F1F3F6;
+  --color-gray-200: #1A2547;
+  --color-gray-300: #1A2547;
+  --color-gray-400: #1A2547;
+  --color-gray-500: #1A2547;
+  --color-gray-600: #1A2547;
+  --color-gray-700: #1A2547;
+  --color-gray-800: #1A2547;
+  --color-gray-900: #0F1830;
+  --color-slate-50: #F1F3F6;
+  --color-slate-100: #F1F3F6;
+  --color-slate-200: #1A2547;
+  --color-slate-300: #1A2547;
+  --color-slate-500: #1A2547;
+  --color-slate-700: #1A2547;
+  --color-slate-800: #1A2547;
+  --color-slate-900: #0F1830;
+  --color-indigo-50: #F1F3F6;
+  --color-indigo-100: #F1F3F6;
+  --color-indigo-500: #2FD5A6;
+  --color-indigo-600: #2FD5A6;
+  --color-indigo-700: #2FD5A6;
+  --color-emerald-50: #F1F3F6;
+  --color-emerald-100: #F1F3F6;
+  --color-emerald-300: #2FD5A6;
+  --color-emerald-500: #2FD5A6;
+  --color-emerald-600: #2FD5A6;
+  --color-emerald-700: #2FD5A6;
+  --color-amber-50: #F1F3F6;
+  --color-amber-100: #F1F3F6;
+  --color-amber-300: #F2A93B;
+  --color-amber-700: #F2A93B;
+  --color-amber-800: #F2A93B;
+  --color-orange-50: #F1F3F6;
+  --color-orange-100: #F1F3F6;
+  --color-orange-400: #F2A93B;
+  --color-orange-500: #F2A93B;
+  --color-orange-700: #F2A93B;
+  --color-red-50: #F1F3F6;
+  --color-red-200: #E85C4A;
+  --color-red-500: #E85C4A;
+  --color-red-600: #E85C4A;
+  --color-red-700: #E85C4A;
+  --color-green-50: #F1F3F6;
+  --color-green-700: #2FD5A6;
 
   --font-sans: 'Inter', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+}
+
+:root {
+  --text-primary: #0F1830;
+  --text-secondary: #1A2547;
+  --text-muted: #1A2547;
+  --background-card: #F1F3F6;
+  --background-dark: #0F1830;
+  --background-hover: #1A2547;
+  --border-color: #1A2547;
+  --primary-color: #2FD5A6;
+  --primary-dark: #2FD5A6;
+  --success-color: #2FD5A6;
+  --warning-color: #F2A93B;
+  --error-color: #E85C4A;
 }
 
 body {
