@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 const code = `def reverse_list(head):
     previous = None
     current = head
@@ -11,6 +13,26 @@ const code = `def reverse_list(head):
     return previous`;
 
 export default function ReviewFeedback() {
+  const [feedback, setFeedback] = useState(
+    "Nice use of BDD in the pseudocode step before coding — matches the whiteboard flow well."
+  );
+  const [isSaved, setIsSaved] = useState(false);
+  const [isReleased, setIsReleased] = useState(false);
+
+  const handleFeedbackChange = (event) => {
+    setFeedback(event.target.value);
+    setIsSaved(false);
+  };
+
+  const handleSaveFeedback = () => {
+    setIsSaved(true);
+  };
+
+  const handleReleaseGrade = () => {
+    setIsSaved(true);
+    setIsReleased(true);
+  };
+
   return (
     <section className="mx-auto w-full max-w-4xl">
       <header className="mb-8">
@@ -33,11 +55,16 @@ export default function ReviewFeedback() {
         <h2 className="text-base font-bold text-ink">Add feedback for this answer</h2>
         <textarea
           className="mt-4 min-h-32 w-full rounded-lg border border-paper-line bg-slate-50 px-3 py-3 text-sm leading-6 text-ink outline-none transition focus:border-brand-teal focus:ring-2 focus:ring-brand-teal/20"
-          defaultValue="Nice use of BDD in the pseudocode step before coding — matches the whiteboard flow well."
+          value={feedback}
+          onChange={handleFeedbackChange}
         />
         <div className="mt-4 flex flex-wrap gap-3">
-          <button type="button" className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">Save feedback</button>
-          <button type="button" className="rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700">Release grade →</button>
+          <button type="button" onClick={handleSaveFeedback} className="rounded-lg border border-slate-300 bg-white px-4 py-2.5 text-sm font-semibold text-slate-700 transition hover:bg-slate-50">
+            {isSaved ? "Feedback saved" : "Save feedback"}
+          </button>
+          <button type="button" onClick={handleReleaseGrade} className="rounded-lg bg-emerald-600 px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-emerald-700">
+            {isReleased ? "Grade released" : "Release grade →"}
+          </button>
         </div>
       </article>
     </section>

@@ -99,7 +99,7 @@ function Register() {
     }`;
 
   return (
-    <main className="min-h-screen bg-[#F1F3F6] px-4 py-8 text-[#F1F3F6] sm:px-6">
+    <main className="min-h-screen bg-[#0F1830] px-4 py-8 text-[#F1F3F6] sm:px-6">
       <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
         <section className="w-full max-w-md rounded-2xl bg-[#1A2547] p-6 shadow-2xl sm:p-8">
           <div className="mb-8 text-center">

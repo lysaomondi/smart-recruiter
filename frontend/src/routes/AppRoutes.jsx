@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
 import Codewars from "../pages/Codewars";
+import LandingPage from "../pages/LandingPage";
 import CandidateResults from "../pages/results/CandidateResults";
 import ResultsDashboard from "../pages/results/ResultsDashboard";
 import RecruiterResults from "../pages/recruiter/Results";
@@ -114,11 +115,7 @@ function AppRoutes() {
         </Route>
       </Route>
 
-      {/* Default route */}
-      <Route
-        path="/"
-        element={<Navigate to="/login" replace />}
-      />
+      <Route path="/" element={<LandingPage />} />
 
       {/* Unknown routes */}
       <Route
