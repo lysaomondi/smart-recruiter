@@ -16,7 +16,7 @@ export default function EditAssessment() {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const active = useSelector((s) => s.assessments.active);
+  const active = useSelector((s) => s.assessment.active);
 
   const [title, setTitle] = useState("");
   const [timeLimit, setTimeLimit] = useState(60);

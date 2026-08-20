@@ -1,0 +1,20 @@
+{
+  "users": [
+    {
+      "id": "b4da0a1e-72b3-4d46-96e3-e38895ebe1df",
+      "name": "grace mutua",
+      "email": "gracemutua@gmail.com",
+      "role": "interviewee",
+      "passwordHash": "fbf717fa71b5b4a2233735c365024b09:3a4916151d4b8b9ba932909427d62e9a1aa30965318d22bd3b3ea3f195cd48eb16b9ffda53b6498639d16047748a07822e2047e01b416c5a33ba986c7838e613",
+      "invitationStatus": "accepted",
+      "assessment": {
+        "status": "upcoming",
+        "attempt": {
+          "id": "f09c939f-f05c-48f5-82d0-63a2c201bee8",
+          "answers": [],
+          "timeRemaining": 1800
+        }
+      }
+    }
+  ]
+}

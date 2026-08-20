@@ -1,9 +1,12 @@
+import api from './api';
+
 // Member 2 — Assessment & Question API layer.
 // FOR NOW: mock data + fake delay, no backend dependency.
 // NEXT WEEK: swap function bodies for real calls through services/api.js.
 // Function names/return shapes are the contract — don't change them.
 
 const delay = (ms = 400) => new Promise((res) => setTimeout(res, ms));
+const useRemoteApi = import.meta.env.VITE_USE_API === 'true';
 
 let MOCK_ASSESSMENTS = [
   {
@@ -47,12 +50,14 @@ let MOCK_ASSESSMENTS = [
 
 /** GET /assessments */
 export async function fetchAssessments() {
+  if (useRemoteApi) return api.get('/assessments');
   await delay();
   return [...MOCK_ASSESSMENTS];
 }
 
 /** GET /assessments/:id — used by later branches (edit/review) */
 export async function fetchAssessmentById(id) {
+  if (useRemoteApi) return api.get(`/assessments/${id}`);
   await delay();
   const found = MOCK_ASSESSMENTS.find((a) => a.id === id);
   if (!found) throw new Error("Assessment not found");
@@ -61,6 +66,7 @@ export async function fetchAssessmentById(id) {
 
 /** POST /assessments — create a new draft assessment */
 export async function createAssessment(payload) {
+  if (useRemoteApi) return api.post('/assessments', payload);
   await delay();
   const newAssessment = {
     id: `a${MOCK_ASSESSMENTS.length + 1}`,
@@ -77,6 +83,7 @@ export async function createAssessment(payload) {
 
 /** PATCH /assessments/:id */
 export async function updateAssessment(id, changes) {
+  if (useRemoteApi) return api.patch(`/assessments/${id}`, changes);
   await delay();
   MOCK_ASSESSMENTS = MOCK_ASSESSMENTS.map((a) =>
     a.id === id ? { ...a, ...changes } : a
@@ -86,12 +93,14 @@ export async function updateAssessment(id, changes) {
 
 /** POST /assessments/:id/publish — draft -> open */
 export async function publishAssessment(id) {
+  if (useRemoteApi) return api.post(`/assessments/${id}/publish`);
   await delay();
   return updateAssessment(id, { status: "open" });
 }
 
 /** POST /assessments/:id/questions */
 export async function addQuestion(assessmentId, question) {
+  if (useRemoteApi) return api.post(`/assessments/${assessmentId}/questions`, question);
   await delay();
   const assessment = MOCK_ASSESSMENTS.find((a) => a.id === assessmentId);
   const newQuestion = { id: `q${Date.now()}`, ...question };
@@ -177,35 +186,42 @@ const TRIAL_ASSESSMENT = {
 
 const assessmentService = {
   getMyAssessments: async () => {
+    if (useRemoteApi) return api.get('/interviewee/assessments');
     await delay();
     return INTERVIEWEE_ASSESSMENTS.map((assessment) => ({ ...assessment }));
   },
   getAssessmentById: async (assessmentId) => {
+    if (useRemoteApi) return api.get(`/interviewee/assessments/${assessmentId}`);
     await delay();
     const assessment = INTERVIEWEE_ASSESSMENTS.find(({ id }) => id === assessmentId);
     if (!assessment) throw new Error("Assessment not found");
     return { ...assessment };
   },
   startAttempt: async (assessmentId) => {
+    if (useRemoteApi) return api.post(`/interviewee/assessments/${assessmentId}/start`);
     await delay();
     const assessment = INTERVIEWEE_ASSESSMENTS.find(({ id }) => id === assessmentId);
     if (!assessment) throw new Error("Assessment not found");
     return { id: `attempt-${assessmentId}`, assessmentId, timeRemaining: assessment.duration * 60, answers: [] };
   },
   submitAnswer: async (attemptId, questionId, answerData) => {
+    if (useRemoteApi) return api.post(`/interviewee/attempts/${attemptId}/questions/${questionId}/answer`, answerData);
     await delay();
     return { attemptId, questionId, ...answerData };
   },
   submitAssessment: async (attemptId) => {
+    if (useRemoteApi) return api.post(`/interviewee/attempts/${attemptId}/submit`);
     await delay();
     return { attemptId, submitted: true };
   },
   getAttemptStatus: async (attemptId) => ({ attemptId, submitted: false }),
   getTrialAssessment: async () => {
+    if (useRemoteApi) return api.get('/interviewee/trial-assessment');
     await delay();
     return { ...TRIAL_ASSESSMENT };
   },
   submitTrialAssessment: async (answers) => {
+    if (useRemoteApi) return api.post('/interviewee/trial-assessment/submit', { answers });
     await delay();
     return { submitted: true, answers };
   },

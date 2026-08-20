@@ -10,7 +10,7 @@ export default function ReviewAssessment() {
   const { id } = useParams();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const active = useSelector((s) => s.assessments.active);
+  const active = useSelector((s) => s.assessment.active);
 
   useEffect(() => {
     dispatch(loadAssessmentById(id));

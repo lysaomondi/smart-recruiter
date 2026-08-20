@@ -1,11 +1,15 @@
-import React from "react";
-
-export default function ErrorMessage({ message, onRetry }) {
+const ErrorMessage = ({ message, onRetry }) => {
   if (!message) return null;
+
   return (
-    <div className="rounded-r-md border-l-4 border-brand-crimson bg-brand-crimson/10 px-3.5 py-2.5 text-xs text-crimson-dim">
-      {message}
-      {onRetry && <button type="button" onClick={onRetry} className="ml-3 underline">Retry</button>}
+    <div className="error-container" role="alert">
+      <div className="error-message">
+        <span className="error-icon" aria-hidden="true">⚠</span>
+        <p>{typeof message === 'string' ? message : 'Something went wrong.'}</p>
+        {onRetry && <button type="button" onClick={onRetry} className="btn-retry">Retry</button>}
+      </div>
     </div>
   );
-}
+};
+
+export default ErrorMessage;

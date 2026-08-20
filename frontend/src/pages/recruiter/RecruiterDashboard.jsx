@@ -10,7 +10,7 @@ import ErrorMessage from "../../components/common/ErrorMessage";
 export default function RecruiterDashboard() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { items, status, error } = useSelector((s) => s.assessments);
+  const { items, status, error } = useSelector((s) => s.assessment);
 
   useEffect(() => {
     dispatch(loadAssessments());

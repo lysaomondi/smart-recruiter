@@ -10,7 +10,7 @@ import Input from "../../components/common/Input";
 export default function CreateAssessment() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const active = useSelector((s) => s.assessments.active);
+  const active = useSelector((s) => s.assessment.active);
 
   const [title, setTitle] = useState("");
   const [timeLimit, setTimeLimit] = useState(60);
