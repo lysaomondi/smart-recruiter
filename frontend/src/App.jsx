@@ -1,4 +1,6 @@
-import AppRoutes from "./routes/AppRoutes";
+import AppRoutes from './routes/AppRoutes';
+import './index.css';
+import './styles/interviewee.css';
 
 function App() {
   return <AppRoutes />;

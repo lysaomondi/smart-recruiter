@@ -11,7 +11,7 @@ const FILTERS = ["all", "draft", "open", "closed"];
 export default function Assessments() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { items, status } = useSelector((s) => s.assessments);
+  const { items, status } = useSelector((s) => s.assessment);
   const [filter, setFilter] = useState("all");
 
   useEffect(() => {

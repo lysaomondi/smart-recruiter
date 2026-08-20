@@ -1,7 +1,11 @@
-import React from "react";
+const Loading = ({ message, label, inline = false }) => {
+  const content = (
+    <div className="loading-spinner" role="status" aria-live="polite">
+      <div className="spinner" />
+      <p>{message || label || 'Loading…'}</p>
+    </div>
+  );
+  return inline ? content : <div className="loading-container">{content}</div>;
+};
 
-export default function Loading({ label = "Loading…", inline = false }) {
-  const text = <span className="font-mono text-sm text-muted-2">{label}</span>;
-  if (inline) return text;
-  return <div className="py-10 text-center">{text}</div>;
-}
+export default Loading;
