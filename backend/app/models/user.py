@@ -10,7 +10,15 @@ class User(db.Model):
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(255), nullable=False, unique=True, index=True)
     password_hash = db.Column(db.String(255), nullable=False)
-    role = db.Column(db.String(20), nullable=False)
+
+    role = db.Column(
+        db.String(20),
+        db.CheckConstraint(
+            "role IN ('recruiter', 'interviewee')",
+            name="check_user_role",
+        ),
+        nullable=False,
+    )
 
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
     updated_at = db.Column(
