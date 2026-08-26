@@ -6,7 +6,9 @@ import {
   loginSuccess,
   loginFailure,
 } from "../../store/slices/authSlice";
+
 import { setActiveTab } from "../../store/slices/activeTabSlice";
+import { loginUser } from "../../services/authService";
 
 function Login() {
   const dispatch = useDispatch();
@@ -15,11 +17,12 @@ function Login() {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
   const [showPassword, setShowPassword] = useState(false);
+
   const [errors, setErrors] = useState({});
   const [error, setError] = useState("");
 
-  // Check the values entered before looking for a saved user.
   function validateForm() {
     const newErrors = {};
 
@@ -36,7 +39,7 @@ function Login() {
     return newErrors;
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
 
     const validationErrors = validateForm();
@@ -48,30 +51,96 @@ function Login() {
 
     setErrors({});
     setError("");
+
     dispatch(loginStart());
 
-    // Read the locally saved accounts and find the entered email address.
-    const users = JSON.parse(localStorage.getItem("users") || "[]");
-    const user = users.find(
-      (u) => u.email.toLowerCase() === email.toLowerCase()
-    );
+    try {
+      /*
+       * Send login credentials to Django.
+       */
+      const data = await loginUser({
+        email: email.trim().toLowerCase(),
+        password,
+      });
 
-    if (!user || user.password !== password) {
-      setError("Invalid email or password.");
-      dispatch(loginFailure("Invalid email or password."));
-      return;
-    }
+      console.log("Login response:", data);
 
-    const loggedInUser = { ...user };
+      /*
+       * Django returns:
+       *
+       * {
+       *   access: "...",
+       *   refresh: "...",
+       *   user: {
+       *     id: 1,
+       *     full_name: "...",
+       *     email: "...",
+       *     role: "RECRUITER"
+       *   }
+       * }
+       */
 
-    // Save the session, update Redux, and open the user's dashboard.
-    localStorage.setItem("currentUser", JSON.stringify(loggedInUser));
-    dispatch(loginSuccess(loggedInUser));
+      if (!data.access || !data.refresh || !data.user) {
+        throw new Error("Invalid login response from server.");
+      }
 
-    if (loggedInUser.role === "recruiter") {
-      dispatch(setActiveTab("recruiter-dashboard"));
-    } else {
-      dispatch(setActiveTab("interviewee-dashboard"));
+      /*
+       * Save JWT tokens.
+       */
+      localStorage.setItem("accessToken", data.access);
+      localStorage.setItem("refreshToken", data.refresh);
+
+      /*
+       * Save the authenticated user.
+       */
+      localStorage.setItem(
+        "currentUser",
+        JSON.stringify(data.user)
+      );
+
+      /*
+       * Update Redux authentication state.
+       */
+      dispatch(loginSuccess(data.user));
+
+      /*
+       * IMPORTANT:
+       * Django uses uppercase role values:
+       *
+       * RECRUITER
+       * INTERVIEWEE
+       */
+
+      if (data.user.role === "RECRUITER") {
+        dispatch(setActiveTab("recruiter-dashboard"));
+      } else if (data.user.role === "INTERVIEWEE") {
+        dispatch(setActiveTab("interviewee-dashboard"));
+      } else {
+        console.error("Unknown user role:", data.user.role);
+
+        dispatch(loginFailure("Unknown account role."));
+        setError("Your account has an invalid role.");
+      }
+    } catch (err) {
+      console.error("Login error:", err);
+
+      const responseData = err.response?.data;
+
+      let message = "Invalid email or password.";
+
+      if (responseData?.detail) {
+        message = responseData.detail;
+      } else if (responseData?.non_field_errors) {
+        message = Array.isArray(responseData.non_field_errors)
+          ? responseData.non_field_errors.join(" ")
+          : responseData.non_field_errors;
+      } else if (err.message) {
+        message = err.message;
+      }
+
+      setError(message);
+
+      dispatch(loginFailure(message));
     }
   }
 
@@ -79,6 +148,7 @@ function Login() {
     <main className="min-h-screen bg-[#F1F3F6] px-4 py-8 text-[#F1F3F6] sm:px-6">
       <div className="flex min-h-[calc(100vh-4rem)] items-center justify-center">
         <section className="w-full max-w-md rounded-2xl bg-[#1A2547] p-6 shadow-2xl sm:p-8">
+
           {/* Header */}
           <div className="mb-8 text-center">
             <p className="mb-3 text-xs font-semibold uppercase tracking-[0.3em] text-[#2FD5A6]">
@@ -129,6 +199,8 @@ function Login() {
                       email: "",
                     }));
                   }
+
+                  setError("");
                 }}
                 placeholder="you@example.com"
                 aria-invalid={Boolean(errors.email)}
@@ -177,11 +249,15 @@ function Login() {
                         password: "",
                       }));
                     }
+
+                    setError("");
                   }}
                   placeholder="Enter your password"
                   aria-invalid={Boolean(errors.password)}
                   aria-describedby={
-                    errors.password ? "password-error" : undefined
+                    errors.password
+                      ? "password-error"
+                      : undefined
                   }
                   className={`w-full rounded-lg border bg-[#0F1830] px-4 py-3 pr-20 text-[#F1F3F6] outline-none transition placeholder:text-[#F1F3F6]/40 focus:ring-2 ${
                     errors.password
@@ -189,9 +265,12 @@ function Login() {
                       : "border-[#0F1830] focus:border-[#2FD5A6] focus:ring-[#2FD5A6]/20"
                   }`}
                 />
+
                 <button
                   type="button"
-                  onClick={() => setShowPassword((current) => !current)}
+                  onClick={() =>
+                    setShowPassword((current) => !current)
+                  }
                   className="absolute right-3 top-1/2 -translate-y-1/2 px-2 py-1 text-sm font-medium text-[#2FD5A6] transition hover:text-[#F1F3F6]"
                 >
                   {showPassword ? "Hide" : "Show"}
@@ -199,7 +278,10 @@ function Login() {
               </div>
 
               {errors.password && (
-                <p id="password-error" className="mt-2 text-sm text-[#E85C4A]">
+                <p
+                  id="password-error"
+                  className="mt-2 text-sm text-[#E85C4A]"
+                >
                   {errors.password}
                 </p>
               )}
@@ -218,6 +300,7 @@ function Login() {
           {/* Register link */}
           <p className="mt-6 text-center text-sm text-[#F1F3F6]/60">
             Don't have an account?{" "}
+
             <button
               type="button"
               onClick={() => dispatch(setActiveTab("register"))}

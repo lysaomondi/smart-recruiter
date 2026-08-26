@@ -1,33 +1,8 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const defaultUsers = [
-  {
-    id: 1,
-    name: "Smart Recruiter Recruiter",
-    email: "recruiter@smartrecruiter.com",
-    password: "password123",
-    role: "recruiter",
-  },
-  {
-    id: 2,
-    name: "Smart Recruiter Interviewee",
-    email: "interviewee@smartrecruiter.com",
-    password: "password123",
-    role: "interviewee",
-  },
-];
-
-const storedUsers = JSON.parse(localStorage.getItem("users") || "[]");
-
-// Create demo accounts once, so the local-only app can be used immediately.
-if (!Array.isArray(storedUsers) || storedUsers.length === 0) {
-  localStorage.setItem("users", JSON.stringify(defaultUsers));
-}
-
 const savedUser = localStorage.getItem("currentUser");
 
 const initialState = {
-  // Restore the saved session when the browser page refreshes.
   user: savedUser ? JSON.parse(savedUser) : null,
   isAuthenticated: Boolean(savedUser),
   isLoading: false,
@@ -36,15 +11,15 @@ const initialState = {
 
 const authSlice = createSlice({
   name: "auth",
+
   initialState,
+
   reducers: {
-    // Start a login or registration attempt and clear any old error.
     loginStart: (state) => {
       state.isLoading = true;
       state.error = null;
     },
 
-    // Store the signed-in user in Redux. The component saves the browser session.
     loginSuccess: (state, action) => {
       state.isLoading = false;
       state.isAuthenticated = true;
@@ -52,7 +27,6 @@ const authSlice = createSlice({
       state.error = null;
     },
 
-    // Reset authentication state when credentials are not valid.
     loginFailure: (state, action) => {
       state.isLoading = false;
       state.isAuthenticated = false;
@@ -60,7 +34,13 @@ const authSlice = createSlice({
       state.error = action.payload;
     },
 
-    // Remove the saved browser session and reset the Redux authentication state.
+    restoreSession: (state, action) => {
+      state.isLoading = false;
+      state.isAuthenticated = true;
+      state.user = action.payload;
+      state.error = null;
+    },
+
     logout: (state) => {
       state.user = null;
       state.isAuthenticated = false;
@@ -68,11 +48,23 @@ const authSlice = createSlice({
       state.error = null;
 
       localStorage.removeItem("currentUser");
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+    },
+
+    clearAuthError: (state) => {
+      state.error = null;
     },
   },
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout } =
-  authSlice.actions;
+export const {
+  loginStart,
+  loginSuccess,
+  loginFailure,
+  restoreSession,
+  logout,
+  clearAuthError,
+} = authSlice.actions;
 
 export default authSlice.reducer;
