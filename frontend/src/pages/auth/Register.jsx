@@ -80,7 +80,7 @@ function Register() {
   }
 
   const inputClassName = (hasError) =>
-    `w-full rounded-lg border bg-[#0F1830] px-4 py-3 text-[#F1F3F6] outline-none transition placeholder:text-[#F1F3F6]/40 focus:ring-2 ${
+    `w-full rounded-lg border bg-[#2FD5A6] px-4 py-3 text-[#F1F3F6] outline-none transition placeholder:text-[#F1F3F6]/40 focus:ring-2 ${
       hasError
         ? "border-[#E85C4A] focus:border-[#E85C4A] focus:ring-[#E85C4A]/20"
         : "border-[#0F1830] focus:border-[#2FD5A6] focus:ring-[#2FD5A6]/20"
