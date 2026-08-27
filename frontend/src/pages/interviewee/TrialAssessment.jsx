@@ -1,164 +1,256 @@
-import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import Timer from '../../components/common/Timer';
-import Whiteboard from '../../components/interview/Whiteboard';
-import Loading from '../../components/common/Loading';
-import Button from '../../components/common/Button';
-import ErrorMessage from '../../components/common/ErrorMessage';
-import { fetchTrialAssessment, submitTrialAssessment } from '../../store/slices/assessmentSlice';
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+
+import {
+  loadAssessments,
+  loadAssessmentById,
+} from "../../store/slices/assessmentSlice";
+
+import Loading from "../../components/common/Loading";
+import Button from "../../components/common/Button";
+import ErrorMessage from "../../components/common/ErrorMessage";
 
 const TrialAssessment = () => {
-    const navigate = useNavigate();
-    const dispatch = useDispatch();
-    const { trialAssessment, loading, error } = useSelector((state) => state.assessment);
-    const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [answers, setAnswers] = useState({});
-    const [isSubmitting, setIsSubmitting] = useState(false);
-    const [timerRunning, setTimerRunning] = useState(false);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
-    useEffect(() => {
-        dispatch(fetchTrialAssessment());
-        setTimerRunning(true);
-    }, [dispatch]);
+  const {
+    items = [],
+    active: assessment,
+    status,
+    error,
+  } = useSelector((state) => state.assessment);
 
-    const handleAnswerChange = (questionId, answer) => {
-        setAnswers((prev) => ({ ...prev, [questionId]: answer }));
-    };
+  const [agreed, setAgreed] = useState(false);
 
-    const handleNext = () => {
-        if (currentQuestionIndex < trialAssessment.questions.length - 1) {
-            setCurrentQuestionIndex((prev) => prev + 1);
-        }
-    };
+  /*
+   * Load assessments available to the logged-in interviewee.
+   */
+  useEffect(() => {
+    dispatch(loadAssessments());
+  }, [dispatch]);
 
-    const handlePrevious = () => {
-        if (currentQuestionIndex > 0) {
-            setCurrentQuestionIndex((prev) => prev - 1);
-        }
-    };
+  /*
+   * Select the trial assessment.
+   *
+   * If an assessment is explicitly named "trial" or "katas",
+   * use that one.
+   *
+   * Otherwise, use the first assessment available to the
+   * interviewee. This supports the current MVP where the
+   * interviewee receives the assessment assigned to them.
+   */
+  useEffect(() => {
+    if (!items.length || assessment) {
+      return;
+    }
 
-    const handleSubmit = async () => {
-        if (window.confirm('Submit your trial assessment?')) {
-            setIsSubmitting(true);
-            try {
-                await dispatch(submitTrialAssessment({ answers }));
-                navigate('/interviewee/dashboard');
-            } catch (error) {
-                console.error('Failed to submit trial:', error);
-            } finally {
-                setIsSubmitting(false);
-            }
-        }
-    };
+    const trialAssessment =
+      items.find(
+        (item) =>
+          item.title?.toLowerCase().includes("trial") ||
+          item.title?.toLowerCase().includes("katas")
+      ) || items[0];
 
-    const handleTimeUp = () => {
-        setTimerRunning(false);
-        handleSubmit();
-    };
+    if (trialAssessment?.id) {
+      dispatch(loadAssessmentById(trialAssessment.id));
+    }
+  }, [dispatch, items, assessment]);
 
-    if (loading) return <Loading />;
-    if (error) return <ErrorMessage message={error} />;
-    if (!trialAssessment) return null;
+  /*
+   * Start the assessment.
+   */
+  const handleStartAssessment = () => {
+    if (!agreed || !assessment?.id) {
+      return;
+    }
 
-    const currentQuestion = trialAssessment.questions[currentQuestionIndex];
-    const totalQuestions = trialAssessment.questions.length;
-    const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
-
-    return (
-        <div className="trial-assessment-container">
-            <div className="trial-header">
-                <h1>Trial Assessment</h1>
-                <p className="trial-notice">
-                    This is a practice assessment. Your answers will not be graded.
-                </p>
-                <Timer
-                    initialTime={trialAssessment.duration * 60}
-                    onTimeUp={handleTimeUp}
-                    isRunning={timerRunning}
-                />
-            </div>
-
-            <div className="assessment-progress">
-                <div className="progress-bar">
-                    <div className="progress-fill" style={{ width: `${progress}%` }} />
-                </div>
-                <span className="progress-text">
-                    Question {currentQuestionIndex + 1} of {totalQuestions}
-                </span>
-            </div>
-
-            <div className="question-container">
-                <div className="question-header">
-                    <span className="question-type">{currentQuestion.type}</span>
-                    <span className="question-points">{currentQuestion.points} points</span>
-                </div>
-
-                <div className="question-content">
-                    <p className="question-text">{currentQuestion.text}</p>
-
-                    {currentQuestion.type === 'multiple_choice' && (
-                        <div className="multiple-choice-options">
-                            {currentQuestion.options.map((option, index) => (
-                                <label key={index} className="option-label">
-                                    <input
-                                        type="radio"
-                                        name={`question-${currentQuestion.id}`}
-                                        value={option}
-                                        checked={answers[currentQuestion.id] === option}
-                                        onChange={() => handleAnswerChange(currentQuestion.id, option)}
-                                    />
-                                    <span>{option}</span>
-                                </label>
-                            ))}
-                        </div>
-                    )}
-
-                    {currentQuestion.type === 'subjective' && (
-                        <div className="subjective-answer">
-                            <textarea
-                                rows="6"
-                                placeholder="Type your answer here..."
-                                value={answers[currentQuestion.id] || ''}
-                                onChange={(e) => handleAnswerChange(currentQuestion.id, e.target.value)}
-                            />
-                        </div>
-                    )}
-
-                    {currentQuestion.type === 'coding' && (
-                        <Whiteboard
-                            question={currentQuestion}
-                            answer={answers[currentQuestion.id]}
-                            onAnswerChange={handleAnswerChange}
-                        />
-                    )}
-                </div>
-
-                <div className="question-actions">
-                    <Button
-                        variant="secondary"
-                        onClick={handlePrevious}
-                        disabled={currentQuestionIndex === 0}
-                    >
-                        Previous
-                    </Button>
-                    {currentQuestionIndex === totalQuestions - 1 ? (
-                        <Button
-                            variant="success"
-                            onClick={handleSubmit}
-                            disabled={isSubmitting}
-                        >
-                            {isSubmitting ? 'Submitting...' : 'Submit Trial'}
-                        </Button>
-                    ) : (
-                        <Button variant="primary" onClick={handleNext}>
-                            Next
-                        </Button>
-                    )}
-                </div>
-            </div>
-        </div>
+    navigate(
+      `/interviewee/assessment/${assessment.id}/take`
     );
+  };
+
+  /*
+   * Loading state.
+   */
+  if (status === "loading" && !assessment) {
+    return <Loading />;
+  }
+
+  /*
+   * API error state.
+   */
+  if (error) {
+    return <ErrorMessage message={error} />;
+  }
+
+  /*
+   * No assessment available.
+   */
+  if (!assessment) {
+    return (
+      <section className="mx-auto w-full max-w-4xl">
+        <div className="rounded-xl border border-paper-line bg-white p-10 text-center shadow-sm">
+          <h1 className="text-2xl font-extrabold text-ink">
+            Trial Assessment
+          </h1>
+
+          <p className="mt-3 text-sm text-muted-2">
+            No assessment is currently available.
+          </p>
+
+          <p className="mt-2 text-sm text-muted-2">
+            Please check back later or continue to your dashboard.
+          </p>
+
+          <div className="mt-6">
+            <Button
+              variant="secondary"
+              onClick={() =>
+                navigate("/interviewee/dashboard")
+              }
+            >
+              Back to Dashboard
+            </Button>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  const questions = assessment.questions || [];
+
+  return (
+    <section className="mx-auto w-full max-w-4xl">
+      <header className="mb-8">
+        <h1 className="text-3xl font-extrabold tracking-tight text-ink">
+          Trial Assessment
+        </h1>
+
+        <p className="mt-2 text-sm text-muted-2">
+          Practice the assessment experience before completing
+          a real technical assessment.
+        </p>
+      </header>
+
+      <article className="rounded-xl border border-paper-line bg-white p-6 shadow-sm">
+
+        {/* Assessment information */}
+        <div className="border-b border-paper-line pb-5">
+          <h2 className="text-xl font-bold text-ink">
+            {assessment.title}
+          </h2>
+
+          <div className="mt-3 flex flex-wrap gap-4 text-sm text-muted-2">
+            <span>
+              {assessment.timeLimitMinutes || 0} minutes
+            </span>
+
+            <span>
+              {questions.length} questions
+            </span>
+
+            <span>
+              {questions.length} points
+            </span>
+          </div>
+        </div>
+
+        {/* Instructions */}
+        <div className="mt-6">
+          <h3 className="text-lg font-bold text-ink">
+            Instructions
+          </h3>
+
+          <ul className="mt-4 list-disc space-y-3 pl-5 text-sm text-muted-2">
+            <li>
+              You have{" "}
+              <strong>
+                {assessment.timeLimitMinutes || 0} minutes
+              </strong>{" "}
+              to complete the assessment.
+            </li>
+
+            <li>
+              The timer starts when you begin the assessment.
+            </li>
+
+            <li>
+              You cannot pause the timer once the assessment
+              has started.
+            </li>
+
+            <li>
+              Save your answers as you progress.
+            </li>
+
+            <li>
+              Your answers are submitted when you finish.
+            </li>
+
+            <li>
+              Make sure you have a stable internet connection.
+            </li>
+          </ul>
+        </div>
+
+        {/* Question types */}
+        <div className="mt-6">
+          <h3 className="text-lg font-bold text-ink">
+            Question Types
+          </h3>
+
+          <ul className="mt-4 space-y-3 text-sm text-muted-2">
+            <li>
+              <strong>Multiple Choice:</strong>{" "}
+              Select an answer.
+            </li>
+
+            <li>
+              <strong>Free Text:</strong>{" "}
+              Provide a written response.
+            </li>
+
+            <li>
+              <strong>Coding Kata:</strong>{" "}
+              Complete the coding challenge.
+            </li>
+          </ul>
+        </div>
+
+        {/* Agreement */}
+        <div className="mt-6 rounded-lg bg-slate-50 p-4">
+          <label className="flex cursor-pointer items-start gap-3 text-sm text-ink">
+            <input
+              type="checkbox"
+              checked={agreed}
+              onChange={(event) =>
+                setAgreed(event.target.checked)
+              }
+              className="mt-1"
+            />
+
+            <span>
+              I have read and understand the instructions.
+            </span>
+          </label>
+        </div>
+
+        {/* Start button */}
+        <div className="mt-6 flex justify-end">
+          <Button
+            variant="primary"
+            onClick={handleStartAssessment}
+            disabled={!agreed || !assessment?.id}
+            size="large"
+          >
+            Start Trial Assessment
+          </Button>
+        </div>
+      </article>
+    </section>
+  );
 };
 
 export default TrialAssessment;

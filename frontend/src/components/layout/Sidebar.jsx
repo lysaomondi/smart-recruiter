@@ -12,7 +12,6 @@ const LINKS = {
   interviewee: [
     { to: "/interviewee/dashboard", label: "My assessments", end: true },
     { to: "/interviewee/trial", label: "Trial assessment" },
-    { to: "/interviewee/assessment/ia1/instructions", label: "Take assessment" },
     { to: "/interviewee/results", label: "Feedback" },
   ],
 };

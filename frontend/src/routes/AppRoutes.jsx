@@ -12,9 +12,9 @@ import IntervieweeDashboard from "../pages/interviewee/IntervieweeDashboard";
 // TEMPORARILY DISABLED — these three pages depend on assessmentSlice thunks
 // (fetchAssessmentDetails, startAssessmentAttempt, etc.) that were accidentally
 // merged in and have since been removed. Member 3 needs to build a real
-//import AssessmentInstructions from "../pages/interviewee/AssessmentInstructions";
-//import TakeAssessment from "../pages/interviewee/TakeAssessment";
-//import TrialAssessment from "../pages/interviewee/TrialAssessment";
+import AssessmentInstructions from "../pages/interviewee/AssessmentInstructions";
+import TakeAssessment from "../pages/interviewee/TakeAssessment";
+import TrialAssessment from "../pages/interviewee/TrialAssessment";
 
 import Login from "../pages/auth/Login";
 import Register from "../pages/auth/Register";
@@ -99,6 +99,7 @@ function AppRoutes() {
             element={<IntervieweeDashboard />}
           />
           <Route path="/interviewee/results" element={<MyResults />} />
+          <Route path="/interviewee/trial" element={<TrialAssessment />} />
           //TEMPORARILY DISABLED, see import comment above
           <Route
             path="/interviewee/assessment/:assessmentId/instructions"
@@ -108,7 +109,6 @@ function AppRoutes() {
             path="/interviewee/assessment/:assessmentId/take"
             element={<TakeAssessment />}
           />
-          <Route path="/interviewee/trial" element={<TrialAssessment />} />
           
         </Route>
       </Route>
