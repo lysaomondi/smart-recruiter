@@ -1,19 +1,27 @@
-import api from './api';
+import { api } from "./api";
 
-export const loginUser = (credentials) => api.post('/auth/login', credentials);
-export const registerUser = (userData) => api.post('/auth/register', userData);
-export const logoutUser = () => {
-  localStorage.removeItem("token");
-  localStorage.removeItem("user");
-};
+/** POST /api/auth/register/ */
+export async function register({ fullName, email, password, passwordConfirmation, role }) {
+  return api.post("/auth/register/", {
+    full_name: fullName,
+    email,
+    password,
+    password_confirmation: passwordConfirmation,
+    role, // must be "RECRUITER" or "INTERVIEWEE"
+  });
+}
 
-const authService = {
-  login: loginUser,
-  register: registerUser,
-  logout: () => {
-    logoutUser();
-    return Promise.resolve();
-  },
-};
+/** POST /api/auth/login/ — returns { access, refresh, user } */
+export async function login({ email, password }) {
+  return api.post("/auth/login/", { email, password });
+}
 
-export default authService;
+/** POST /api/auth/logout/ — blacklists the refresh token */
+export async function logout(refreshToken) {
+  return api.post("/auth/logout/", { refresh: refreshToken });
+}
+
+/** GET /api/auth/me/ */
+export async function fetchMe() {
+  return api.get("/auth/me/");
+}
