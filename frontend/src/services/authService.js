@@ -7,7 +7,7 @@ export async function register({ fullName, email, password, passwordConfirmation
     email,
     password,
     password_confirmation: passwordConfirmation,
-    role, // must be "RECRUITER" or "INTERVIEWEE"
+    role,
   });
 }
 
