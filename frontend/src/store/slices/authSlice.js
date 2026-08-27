@@ -13,7 +13,7 @@ export const registerUser = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(err.message);
     }
-  }
+  },
 );
 
 export const loginUser = createAsyncThunk(
@@ -27,7 +27,21 @@ export const loginUser = createAsyncThunk(
     } catch (err) {
       return rejectWithValue(err.message);
     }
-  }
+  },
+);
+
+export const restoreSession = createAsyncThunk(
+  "auth/restoreSession",
+  async (_, { rejectWithValue }) => {
+    if (!localStorage.getItem("access_token")) return null;
+    try {
+      return normalizeUser(await authService.fetchMe());
+    } catch (err) {
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
+      return rejectWithValue(err.message);
+    }
+  },
 );
 
 export const logout = createAsyncThunk("auth/logout", async () => {
@@ -45,6 +59,7 @@ const initialState = {
   user: null,
   isAuthenticated: false,
   isLoading: false,
+  isInitialized: false,
   error: null,
 };
 
@@ -83,6 +98,21 @@ const authSlice = createSlice({
         state.isAuthenticated = false;
         state.user = null;
         state.error = action.payload || "Invalid email or password.";
+      })
+      .addCase(restoreSession.pending, (state) => {
+        state.isLoading = true;
+      })
+      .addCase(restoreSession.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isInitialized = true;
+        if (action.payload) {
+          state.isAuthenticated = true;
+          state.user = action.payload;
+        }
+      })
+      .addCase(restoreSession.rejected, (state) => {
+        state.isLoading = false;
+        state.isInitialized = true;
       })
       .addCase(logout.fulfilled, (state) => {
         state.user = null;

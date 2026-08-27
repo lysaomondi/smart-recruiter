@@ -4,8 +4,11 @@ import { Provider } from "react-redux";
 import { BrowserRouter } from "react-router-dom";
 import App from "./App";
 import { store } from "./store/store";
+import { restoreSession } from "./store/slices/authSlice";
 import "./index.css";
 import "./styles/interviewee.css";
+
+store.dispatch(restoreSession());
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

@@ -53,12 +53,31 @@ export async function addQuestion(assessmentId, question) {
  *  URL isn't confirmed yet. Keeping this as a stub so the "Fetch from
  *  Codewars" button in QuestionBuilder doesn't crash — swap the body for
  *  a real api.get(...) call once that endpoint is confirmed. */
-export async function fetchCodewarsKata() {
-  console.warn("fetchCodewarsKata: still a stub — Codewars endpoint not wired up yet");
-  return {
-    type: "kata",
-    source: "codewars",
-    prompt: "Reverse a singly linked list",
-    difficulty: "6 kyu",
-  };
+export async function fetchCodewarsKata(query) {
+  return api.get(`/codewars/search/?q=${encodeURIComponent(query)}`);
+}
+
+export async function fetchChoices(assessmentId, questionId) {
+  return api.get(
+    `/assessments/${assessmentId}/questions/${questionId}/choices/`,
+  );
+}
+
+export async function addChoice(assessmentId, questionId, choice) {
+  return api.post(
+    `/assessments/${assessmentId}/questions/${questionId}/choices/`,
+    choice,
+  );
+}
+
+export async function updateChoice(
+  assessmentId,
+  questionId,
+  choiceId,
+  changes,
+) {
+  return api.patch(
+    `/assessments/${assessmentId}/questions/${questionId}/choices/${choiceId}/`,
+    changes,
+  );
 }
