@@ -1,35 +1,49 @@
-import { createSlice } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import * as authService from "../../services/authService";
 
-const defaultUsers = [
-  {
-    id: 1,
-    name: "Smart Recruiter Recruiter",
-    email: "recruiter@smartrecruiter.com",
-    password: "password123",
-    role: "recruiter",
-  },
-  {
-    id: 2,
-    name: "Smart Recruiter Interviewee",
-    email: "interviewee@smartrecruiter.com",
-    password: "password123",
-    role: "interviewee",
-  },
-];
-
-const storedUsers = JSON.parse(localStorage.getItem("users") || "[]");
-
-// Create demo accounts once, so the local-only app can be used immediately.
-if (!Array.isArray(storedUsers) || storedUsers.length === 0) {
-  localStorage.setItem("users", JSON.stringify(defaultUsers));
+function normalizeUser(user) {
+  return { ...user, role: user.role.toLowerCase() };
 }
 
-const savedUser = localStorage.getItem("currentUser");
+export const registerUser = createAsyncThunk(
+  "auth/register",
+  async (payload, { rejectWithValue }) => {
+    try {
+      return await authService.register(payload);
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+export const loginUser = createAsyncThunk(
+  "auth/login",
+  async (payload, { rejectWithValue }) => {
+    try {
+      const data = await authService.login(payload);
+      localStorage.setItem("access_token", data.access);
+      localStorage.setItem("refresh_token", data.refresh);
+      return normalizeUser(data.user);
+    } catch (err) {
+      return rejectWithValue(err.message);
+    }
+  }
+);
+
+export const logout = createAsyncThunk("auth/logout", async () => {
+  const refreshToken = localStorage.getItem("refresh_token");
+  try {
+    if (refreshToken) await authService.logout(refreshToken);
+  } catch {
+    // Even if blacklist fails, still clear local state.
+  }
+  localStorage.removeItem("access_token");
+  localStorage.removeItem("refresh_token");
+});
 
 const initialState = {
-  // Restore the saved session when the browser page refreshes.
-  user: savedUser ? JSON.parse(savedUser) : null,
-  isAuthenticated: Boolean(savedUser),
+  user: null,
+  isAuthenticated: false,
   isLoading: false,
   error: null,
 };
@@ -38,41 +52,46 @@ const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {
-    // Start a login or registration attempt and clear any old error.
-    loginStart: (state) => {
-      state.isLoading = true;
+    clearAuthError(state) {
       state.error = null;
     },
-
-    // Store the signed-in user in Redux. The component saves the browser session.
-    loginSuccess: (state, action) => {
-      state.isLoading = false;
-      state.isAuthenticated = true;
-      state.user = action.payload;
-      state.error = null;
-    },
-
-    // Reset authentication state when credentials are not valid.
-    loginFailure: (state, action) => {
-      state.isLoading = false;
-      state.isAuthenticated = false;
-      state.user = null;
-      state.error = action.payload;
-    },
-
-    // Remove the saved browser session and reset the Redux authentication state.
-    logout: (state) => {
-      state.user = null;
-      state.isAuthenticated = false;
-      state.isLoading = false;
-      state.error = null;
-
-      localStorage.removeItem("currentUser");
-    },
+  },
+  extraReducers: (builder) => {
+    builder
+      .addCase(registerUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(registerUser.fulfilled, (state) => {
+        state.isLoading = false;
+      })
+      .addCase(registerUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.error = action.payload || "Registration failed.";
+      })
+      .addCase(loginUser.pending, (state) => {
+        state.isLoading = true;
+        state.error = null;
+      })
+      .addCase(loginUser.fulfilled, (state, action) => {
+        state.isLoading = false;
+        state.isAuthenticated = true;
+        state.user = action.payload;
+      })
+      .addCase(loginUser.rejected, (state, action) => {
+        state.isLoading = false;
+        state.isAuthenticated = false;
+        state.user = null;
+        state.error = action.payload || "Invalid email or password.";
+      })
+      .addCase(logout.fulfilled, (state) => {
+        state.user = null;
+        state.isAuthenticated = false;
+        state.isLoading = false;
+        state.error = null;
+      });
   },
 });
 
-export const { loginStart, loginSuccess, loginFailure, logout } =
-  authSlice.actions;
-
+export const { clearAuthError } = authSlice.actions;
 export default authSlice.reducer;
