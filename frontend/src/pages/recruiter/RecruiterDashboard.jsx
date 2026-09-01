@@ -28,10 +28,18 @@ export default function RecruiterDashboard() {
           <p className="text-sm text-muted-2">
             Every technical screen you've built, sent, or graded — in one place.
           </p>
-        </div>
-        <Button onClick={() => navigate("/recruiter/assessments/create")}>+ New assessment</Button>
+        
+</div>
+        <Button
+          onClick={() => navigate("/recruiter/assessments/create")}
+          style={{ backgroundColor: "#F2A93B", color: "#0F1830" }}
+          className="hover:brightness-110"
+        >
+          + New assessment
+        </Button>
       </div>
 
+```
       <div className="mb-6 grid grid-cols-3 gap-4">
         <div className="rounded-xl border border-paper-line bg-white p-4">
           <div className="font-mono text-2xl font-bold">{invitedTotal}</div>

@@ -322,7 +322,7 @@ const TakeAssessment = () => {
           isRunning={timerRunning}
         />
 
-        <Button
+        {/* <Button
           variant="danger"
           onClick={handleSubmit}
           disabled={isSubmitting}
@@ -330,7 +330,7 @@ const TakeAssessment = () => {
           {isSubmitting
             ? "Submitting..."
             : "Submit Assessment"}
-        </Button>
+        </Button>*/}
 
       </div>
 
